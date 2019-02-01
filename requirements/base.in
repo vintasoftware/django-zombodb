@@ -1,0 +1,5 @@
+# Core requirements for using this application
+
+Django
+python-decouple==3.1
+psycopg2==2.7.7

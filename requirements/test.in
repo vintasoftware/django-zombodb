@@ -1,0 +1,5 @@
+# Requirements for test runs.
+
+coverage==4.4.1           # Analyzes test coverage
+codecov>=2.0.0            # Integration with codecov
+mock>=1.0.1               # Mocks for unittests
