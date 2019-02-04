@@ -15,18 +15,23 @@ To run this example, follow these instructions:
 
         createuser django_zombodb
         createdb django_zombodb
+
+4. Create ZomboDB extension on DB:
+
+		psql -d django_zombodb -c "CREATE EXTENSION zombodb"
 		
-4. Make and apply migrations
+5. Make and apply migrations
 
 		python manage.py makemigrations
 		
 		python manage.py migrate
+
+6. Load sample data from PromptCloud's Restaurants on Yellowpages.com [dataset](https://www.kaggle.com/PromptCloudHQ/restaurants-on-yellowpagescom):
+
+		python manage.py filldata
 		
-5. Run the server
+6. Run the server
 
 		python manage.py runserver
 		
 6. Access from the browser at `http://127.0.0.1:8000`
-
-
-https://www.kaggle.com/PromptCloudHQ/restaurants-on-yellowpagescom
