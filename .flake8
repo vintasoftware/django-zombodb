@@ -1,0 +1,4 @@
+[flake8]
+max-line-length = 100
+ignore = D100,D101,D102,D103,D105,D205,D400
+exclude = */migrations/*,*/settings/*,./venv/*,./env/*

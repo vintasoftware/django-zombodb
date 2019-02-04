@@ -2,21 +2,16 @@ from django.contrib.postgres.indexes import PostgresIndex
 
 
 class ZomboDBIndexStatementAdapter:
+    template = "CREATE INDEX %(name)s ON %(table)s USING zombodb ((ROW(%(columns)s)::%(row_type)s)) %(extra)s"  # noqa: E501
 
-    def __init__(self, statement, model, schema_editor, fields):
+    def __init__(self, statement, model, schema_editor, fields, row_type):
         self.statement = statement
-        self.template = self.statement.template
         self.parts = self.statement.parts
 
         self.model = model
         self.schema_editor = schema_editor
         self.fields = fields
-        max_name_length = self.schema_editor.connection.ops.max_name_length()
-        self.idx_type = (
-            self.model._meta.db_table[:max_name_length - len('_idx_type')] +
-            '_idx_type')
-
-        statement.parts['using'] = self._get_using()
+        self.row_type = row_type
 
     def references_table(self, *args, **kwargs):
         return self.statement.references_table(*args, **kwargs)
@@ -25,25 +20,13 @@ class ZomboDBIndexStatementAdapter:
         return self.statement.references_column(*args, **kwargs)
 
     def rename_table_references(self, *args, **kwargs):
-        raise NotImplementedError
+        return self.statement.rename_table_references(*args, **kwargs)
 
     def rename_column_references(self, *args, **kwargs):
-        raise NotImplementedError
-
-    def _get_using(self):
-        suffix = ' USING zombodb '
-        if list(self.fields) == ['*']:
-            suffix += '((table_name.*))'
-        else:
-            suffix += '((ROW('
-            for field in self.fields:
-                suffix += field + ', '
-            suffix = suffix[:-len(', ')]
-            suffix += ')::%s));' % self.idx_type
-        return suffix
+        return self.statement.rename_column_references(*args, **kwargs)
 
     def _get_create_type(self):
-        create_type = 'CREATE TYPE %s AS (' % self.idx_type
+        create_type = 'CREATE TYPE %s AS (' % self.row_type
         for field in self.fields:
             field_db_type = self.model._meta.get_field(field).db_type(
                 connection=self.schema_editor.connection)
@@ -52,31 +35,27 @@ class ZomboDBIndexStatementAdapter:
         create_type += '); '
         return create_type
 
+    def __repr__(self):
+        return '<%s %r>' % (self.__class__.__name__, str(self))
+
     def __str__(self):
-        parts = dict(self.parts)
-        parts['columns'] = ''
+        parts = dict(self.parts)  # copy
+        parts['row_type'] = self.row_type
         s = self.template % parts
-        s = s.replace('()', '')
+
         s = self._get_create_type() + s
         return s
 
 
 class ZomboDBIndex(PostgresIndex):
+    suffix = 'zombodb'
 
-    def __init__(self, *, fields=(), **kwargs):
-        if not isinstance(fields, (list, tuple)) or not fields:
-            raise ValueError(
-                "fields must be a list/tuple with a single '*' "
-                "or a list/tuple of field names")
-        super().__init__(fields=fields, **kwargs)
-
-    def deconstruct(self):
-        path, args, kwargs = super().deconstruct()
-        kwargs['fields'] = self.fields
-        return path, args, kwargs
+    def _get_row_type_name(self):
+        # should be less than 63 (DatabaseOperations.max_name_length),
+        # since Index.max_name_length is 30
+        return self.name + '_row_type'
 
     def create_sql(self, model, schema_editor, using=''):
-        # no using, see ZomboDBIndexStatementAdapter
         statement = super().create_sql(model, schema_editor)
         with_params = self.get_with_params()
         if with_params:
@@ -84,5 +63,11 @@ class ZomboDBIndex(PostgresIndex):
                 ', '.join(with_params),
                 statement.parts['extra'],
             )
+        row_type = schema_editor.quote_name(self._get_row_type_name())
         return ZomboDBIndexStatementAdapter(
-            statement, model, schema_editor, self.fields)
+            statement, model, schema_editor, self.fields, row_type)
+
+    def remove_sql(self, model, schema_editor):
+        sql = super().remove_sql(model, schema_editor)
+        row_type = schema_editor.quote_name(self._get_row_type_name())
+        return sql + ('; DROP TYPE IF EXISTS %s;' % row_type)
