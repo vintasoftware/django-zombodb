@@ -20,7 +20,15 @@ class Restaurant(models.Model):
 
     class Meta:
         indexes = [
-            ZomboDBIndex(fields=('name', 'street', 'categories')),
+            ZomboDBIndex(fields=(
+                'name',
+                'street',
+                'zip_code',
+                'city',
+                'state',
+                'phone',
+                'categories',
+            )),
         ]
 
     def __str__(self):

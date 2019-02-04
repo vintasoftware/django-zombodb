@@ -1,15 +1,34 @@
 import json
 
 from django.contrib.admin.views.main import SEARCH_VAR
+from django.core.exceptions import ImproperlyConfigured
 from django.db import connection
 from django.db.models import IntegerField
 from django.db.models.expressions import RawSQL, Value
 from django.utils.http import urlencode
 
+from django_zombodb.indexes import ZomboDBIndex
+
 
 class ZomboDBAdminMixin:
 
+    def get_search_fields(self, request):
+        """
+        get_search_fields is unnecessary if ZomboDBAdminMixin is used.
+        But since search_form.html uses this, we'll return a placeholder tuple
+        """
+        return ('-placeholder-')
+
     def _check_if_valid_search(self, request):
+        for index in self.model._meta.indexes:
+            if isinstance(index, ZomboDBIndex):
+                break
+        else:
+            raise ImproperlyConfigured(
+                "Can't find a ZomboDBIndex at model {self.model}. "
+                "Did you forget it? "
+                "Did you set the right `model` attr in {self.__class__}?".format(self=self))
+
         search_term = request.GET.get(SEARCH_VAR, '')
         if not search_term:
             return False
@@ -17,10 +36,11 @@ class ZomboDBAdminMixin:
         with connection.cursor() as cursor:
             q = urlencode({'q': search_term})
             cursor.execute('''
-                SELECT zdb.request(
-                    'deduped_entities_entitydeduped_zombo_idx',
-                    %s);
-            ''', ['_validate/query?' + q])
+                SELECT zdb.request(%(index_name)s, %(endpoint)s);
+            ''', {
+                'index_name': index.name,
+                'endpoint': '_validate/query?' + q
+            })
             search_validation_result = json.loads(cursor.fetchone()[0])
             return search_validation_result['valid']
 
