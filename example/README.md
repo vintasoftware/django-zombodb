@@ -19,19 +19,32 @@ To run this example, follow these instructions:
 4. Create ZomboDB extension on DB:
 
 		psql -d django_zombodb -c "CREATE EXTENSION zombodb"
+
+5. Run a ElasticSearch cluster:
+
+		elasticsearch
+
+6. Find where your Postgres configuration file is:
+
+		psql -d django_zombodb -c "SHOW config_file"
+
+7. Set zdb.default_elasticsearch_url on your Postgres configuration file:
+
+		# add this to `postgresql.conf`, value is your ElasticSearch cluster URL:
+		zdb.default_elasticsearch_url = 'http://localhost:9200/'
 		
-5. Make and apply migrations
+8. Make and apply migrations
 
 		python manage.py makemigrations
 		
 		python manage.py migrate
 
-6. Load sample data from PromptCloud's Restaurants on Yellowpages.com [dataset](https://www.kaggle.com/PromptCloudHQ/restaurants-on-yellowpagescom):
+9. Load sample data from PromptCloud's Restaurants on Yellowpages.com [dataset](https://www.kaggle.com/PromptCloudHQ/restaurants-on-yellowpagescom):
 
 		python manage.py filldata
 		
-6. Run the server
+10. Run the server
 
 		python manage.py runserver
 		
-6. Access from the browser at `http://127.0.0.1:8000`
+11. Access from the browser at `http://127.0.0.1:8000`
