@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django_zombodb.indexes import ZomboDBIndex
+from django_zombodb.querysets import SearchQuerySet
 
 import uuid
 
@@ -17,6 +18,8 @@ class Restaurant(models.Model):
     email = models.EmailField()
     website = models.URLField(blank=True)
     categories = ArrayField(models.TextField())
+
+    objects = models.Manager.from_queryset(SearchQuerySet)()
 
     class Meta:
         indexes = [

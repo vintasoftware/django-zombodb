@@ -10,6 +10,7 @@ class RestaurantAdmin(ZomboDBAdminMixin, admin.ModelAdmin):
     model = Restaurant
     list_display = (
         'name',
+        '_zombodb_score',
         'street',
         'zip_code',
         'city',
@@ -17,3 +18,6 @@ class RestaurantAdmin(ZomboDBAdminMixin, admin.ModelAdmin):
         'phone',
         'categories',
     )
+
+    class Media:
+        js = ('django_zombodb/js/hide_show_score.js',)

@@ -1,13 +1,10 @@
-import json
 
+from django.utils.translation import gettext as _
 from django.contrib.admin.views.main import SEARCH_VAR
-from django.core.exceptions import ImproperlyConfigured
-from django.db import connection
-from django.db.models import IntegerField
-from django.db.models.expressions import RawSQL, Value
-from django.utils.http import urlencode
+from django.db.models import FloatField
+from django.db.models.expressions import Value
 
-from django_zombodb.indexes import ZomboDBIndex
+from django_zombodb.helpers import validate_query_string
 
 
 class ZomboDBAdminMixin:
@@ -20,29 +17,11 @@ class ZomboDBAdminMixin:
         return ('-placeholder-')
 
     def _check_if_valid_search(self, request):
-        for index in self.model._meta.indexes:
-            if isinstance(index, ZomboDBIndex):
-                break
-        else:
-            raise ImproperlyConfigured(
-                "Can't find a ZomboDBIndex at model {self.model}. "
-                "Did you forget it? "
-                "Did you set the right `model` attr in {self.__class__}?".format(self=self))
-
         search_term = request.GET.get(SEARCH_VAR, '')
         if not search_term:
             return False
 
-        with connection.cursor() as cursor:
-            q = urlencode({'q': search_term})
-            cursor.execute('''
-                SELECT zdb.request(%(index_name)s, %(endpoint)s);
-            ''', {
-                'index_name': index.name,
-                'endpoint': '_validate/query?' + q
-            })
-            search_validation_result = json.loads(cursor.fetchone()[0])
-            return search_validation_result['valid']
+        return validate_query_string(self.model, search_term)
 
     def get_list_display(self, request):
         request._has_valid_search = self._check_if_valid_search(request)
@@ -51,26 +30,20 @@ class ZomboDBAdminMixin:
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
 
-        if getattr(request, '_has_valid_search', False):
-            queryset = queryset.annotate(
-                zombodb_score=RawSQL(f'zdb.score("{self.model._meta.db_table}"."ctid")', [])
-            )
-        else:
-            queryset = queryset.annotate(zombodb_score=Value(0, IntegerField()))
+        if not getattr(request, '_has_valid_search', False):
+            queryset = queryset.annotate(zombodb_score=Value(0.0, FloatField()))
 
         return queryset
 
     def get_search_results(self, request, queryset, search_term):
         if search_term:
             if request._has_valid_search:
-                queryset = queryset.extra(
-                    where=[f'{queryset.model._meta.db_table} ==> %s'],
-                    params=[search_term],
-                )
+                queryset = queryset.search(
+                    search_term, validate=False, sort=False, score_attr='zombodb_score')
             else:
                 self.message_user(
                     request,
-                    "Invalid search query. Not filtering by search.",
+                    _("Invalid search query. Not filtering by search."),
                     level='ERROR')
         use_distinct = False
         return queryset, use_distinct
