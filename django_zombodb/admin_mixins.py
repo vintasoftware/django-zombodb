@@ -4,7 +4,7 @@ from django.contrib.admin.views.main import SEARCH_VAR
 from django.db.models import FloatField
 from django.db.models.expressions import Value
 
-from django_zombodb.helpers import validate_query_string
+from django_zombodb.helpers import validate_query
 
 
 class ZomboDBAdminMixin:
@@ -21,7 +21,7 @@ class ZomboDBAdminMixin:
         if not search_term:
             return False
 
-        return validate_query_string(self.model, search_term)
+        return validate_query(self.model, search_term)
 
     def get_list_display(self, request):
         request._has_valid_search = self._check_if_valid_search(request)
