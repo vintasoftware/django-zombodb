@@ -65,8 +65,8 @@ WSGI_APPLICATION = 'example.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'USER': 'django_zombodb',
-        'NAME': 'django_zombodb',
+        'USER': 'django_zombodb_test',
+        'NAME': 'django_zombodb_test',
         'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': config('POSTGRES_PORT', default='5432'),

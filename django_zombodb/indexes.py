@@ -1,5 +1,6 @@
 from django.contrib.postgres.indexes import PostgresIndex
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 
 
 class ZomboDBIndexStatementAdapter:
@@ -65,7 +66,12 @@ class ZomboDBIndex(PostgresIndex):
             llapi=None,
             **kwargs):
         if url is None:
-            url = settings.ZOMBODB_ELASTICSEARCH_URL
+            try:
+                url = settings.ZOMBODB_ELASTICSEARCH_URL
+            except AttributeError:
+                raise ImproperlyConfigured(
+                    "Please set ZOMBODB_ELASTICSEARCH_URL on settings or "
+                    "pass a `url` argument for this index")
 
         self.url = url
         self.shards = shards
@@ -95,18 +101,8 @@ class ZomboDBIndex(PostgresIndex):
         row_type = schema_editor.quote_name(self._get_row_type_name())
         return sql + ('; DROP TYPE IF EXISTS %s;' % row_type)
 
-    def _format_param_value(self, value, param_type):
-        if param_type == str:
-            value_formatted = '"' + value + '"'
-        elif param_type == int:
-            value_formatted = str(value)
-        else:  # param_type == bool
-            value_formatted = 'true' if value else 'false'
-        return value_formatted
-
-    def get_with_params(self):
-        with_params = []
-        for param, value, param_type in [
+    def _get_params(self):
+        return [
             ('url', self.url, str),
             ('shards', self.shards, int),
             ('replicas', self.replicas, int),
@@ -117,7 +113,27 @@ class ZomboDBIndex(PostgresIndex):
             ('batch_size', self.batch_size, int),
             ('compression_level', self.compression_level, int),
             ('llapi', self.llapi, bool),
-        ]:
+        ]
+
+    def _format_param_value(self, value, param_type):
+        if param_type == str:
+            value_formatted = '"' + value + '"'
+        elif param_type == int:
+            value_formatted = str(value)
+        else:  # param_type == bool
+            value_formatted = 'true' if value else 'false'
+        return value_formatted
+
+    def deconstruct(self):
+        path, args, kwargs = super().deconstruct()
+        for param, value, __ in self._get_params():
+            if value is not None:
+                kwargs[param] = value
+        return path, args, kwargs
+
+    def get_with_params(self):
+        with_params = []
+        for param, value, param_type in self._get_params():
             if value is not None:
                 value_formatted = self._format_param_value(value, param_type)
                 with_params.append('%s = %s' % (param, value_formatted))

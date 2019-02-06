@@ -5,7 +5,6 @@ import django
 
 from decouple import config
 
-
 DEBUG = False
 USE_TZ = True
 
@@ -13,7 +12,7 @@ SECRET_KEY = 'test'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'psqlextra.backend',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'USER': 'django_zombodb',
         'NAME': 'django_zombodb',
         'PASSWORD': '',
@@ -33,6 +32,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_zombodb',
+
+    'tests',
 ]
 
 SITE_ID = 1
