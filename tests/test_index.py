@@ -1,11 +1,13 @@
 from django.test import TestCase, override_settings
 from django.core.exceptions import ImproperlyConfigured
+from django.db import connection
 
 from django_zombodb.indexes import ZomboDBIndex
 
-from .models import DateTimeArrayModel
+from .models import IntegerArrayModel, DateTimeArrayModel
 
 
+# Based on django/tests/postgres_tests/test_indexes.py
 @override_settings(ZOMBODB_ELASTICSEARCH_URL='http://localhost:9999')
 class ZomboDBIndexTests(TestCase):
 
@@ -37,7 +39,7 @@ class ZomboDBIndexTests(TestCase):
             shards=2,
             replicas=2,
             alias='test-alias',
-            refresh_interval='10',
+            refresh_interval='10s',
             type_name='test-doc',
             bulk_concurrency=20,
             batch_size=8388608 * 2,
@@ -56,7 +58,7 @@ class ZomboDBIndexTests(TestCase):
                 'shards': 2,
                 'replicas': 2,
                 'alias': 'test-alias',
-                'refresh_interval': '10',
+                'refresh_interval': '10s',
                 'type_name': 'test-doc',
                 'bulk_concurrency': 20,
                 'batch_size': 8388608 * 2,
@@ -90,3 +92,72 @@ class ZomboDBIndexNoURLTests(TestCase):
             str(cm.exception),
             "Please set ZOMBODB_ELASTICSEARCH_URL on settings or "
             "pass a `url` argument for this index")
+
+
+# Based on django/tests/postgres_tests/test_indexes.py
+@override_settings(ZOMBODB_ELASTICSEARCH_URL='http://localhost:9200/')
+class ZomboDBIndexSchemaTests(TestCase):
+    '''
+    This test needs a running ElasticSearch instance at http://localhost:9200/
+    '''
+
+    def get_constraints(self, table):
+        """
+        Get the indexes on the table using a new cursor.
+        """
+        with connection.cursor() as cursor:
+            return connection.introspection.get_constraints(cursor, table)
+
+    def test_zombodb_index(self):
+        # Ensure the table is there and doesn't have an index.
+        self.assertNotIn('field', self.get_constraints(IntegerArrayModel._meta.db_table))
+        # Add the index
+        index_name = 'integer_array_model_field_zombodb'
+        index = ZomboDBIndex(fields=['field'], name=index_name)
+        with connection.schema_editor() as editor:
+            editor.add_index(IntegerArrayModel, index)
+        constraints = self.get_constraints(IntegerArrayModel._meta.db_table)
+        # Check zombodb index was added
+        self.assertEqual(constraints[index_name]['type'], ZomboDBIndex.suffix)
+        # Drop the index
+        with connection.schema_editor() as editor:
+            editor.remove_index(IntegerArrayModel, index)
+        self.assertNotIn(index_name, self.get_constraints(IntegerArrayModel._meta.db_table))
+
+    def test_zombodb_parameters(self):
+        index_name = 'integer_array_zombodb_params'
+        index = ZomboDBIndex(
+            fields=['field'],
+            name=index_name,
+            url='http://localhost:9200/',
+            shards=2,
+            replicas=2,
+            alias='test-alias',
+            refresh_interval='10s',
+            type_name='test-doc',
+            bulk_concurrency=20,
+            batch_size=8388608 * 2,
+            compression_level=9,
+            llapi=True,
+        )
+        with connection.schema_editor() as editor:
+            editor.add_index(IntegerArrayModel, index)
+        constraints = self.get_constraints(IntegerArrayModel._meta.db_table)
+        self.assertEqual(constraints[index_name]['type'], ZomboDBIndex.suffix)
+        actual_options = constraints[index_name]['options']
+        for expected_option in [
+            "url=http://localhost:9200/",
+            "shards=2",
+            "replicas=2",
+            "alias=test-alias",
+            "refresh_interval=10s",
+            "type_name=test-doc",
+            "bulk_concurrency=20",
+            "batch_size=16777216",
+            "compression_level=9",
+            "llapi=true",
+        ]:
+            self.assertIn(expected_option, actual_options)
+        with connection.schema_editor() as editor:
+            editor.remove_index(IntegerArrayModel, index)
+        self.assertNotIn(index_name, self.get_constraints(IntegerArrayModel._meta.db_table))
