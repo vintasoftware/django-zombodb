@@ -39,7 +39,8 @@ class ZomboDBAdminMixin:
         if search_term:
             if request._has_valid_search:
                 queryset = queryset.search(
-                    search_term, validate=False, sort=False, score_attr='zombodb_score')
+                    search_term, validate=False, sort=False, score_attr='zombodb_score'
+                ).annotate_score()
             else:
                 self.message_user(
                     request,

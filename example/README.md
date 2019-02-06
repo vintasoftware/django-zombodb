@@ -24,27 +24,22 @@ To run this example, follow these instructions:
 
 		elasticsearch
 
-6. Find where your Postgres configuration file is:
+6. Set ZOMBODB_ELASTICSEARCH_URL on your settings.py:
 
-		psql -d django_zombodb -c "SHOW config_file"
-
-7. Set zdb.default_elasticsearch_url on your Postgres configuration file:
-
-		# add this to `postgresql.conf`, value is your ElasticSearch cluster URL:
-		zdb.default_elasticsearch_url = 'http://localhost:9200/'
+		ZOMBODB_ELASTICSEARCH_URL = 'http://localhost:9200/'
 		
-8. Make and apply migrations
+7. Make and apply migrations
 
 		python manage.py makemigrations
 		
 		python manage.py migrate
 
-9. Load sample data from PromptCloud's Restaurants on Yellowpages.com [dataset](https://www.kaggle.com/PromptCloudHQ/restaurants-on-yellowpagescom):
+8. Load sample data from PromptCloud's Restaurants on Yellowpages.com [dataset](https://www.kaggle.com/PromptCloudHQ/restaurants-on-yellowpagescom):
 
 		python manage.py filldata
 		
-10. Run the server
+9. Run the server
 
 		python manage.py runserver
 		
-11. Access from the browser at `http://127.0.0.1:8000`
+10. Access from the browser at `http://127.0.0.1:8000`

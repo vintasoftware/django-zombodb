@@ -1,4 +1,5 @@
 from django.contrib.postgres.indexes import PostgresIndex
+from django.conf import settings
 
 
 class ZomboDBIndexStatementAdapter:
@@ -50,6 +51,34 @@ class ZomboDBIndexStatementAdapter:
 class ZomboDBIndex(PostgresIndex):
     suffix = 'zombodb'
 
+    def __init__(
+            self, *,
+            url=None,
+            shards=None,
+            replicas=None,
+            alias=None,
+            refresh_interval=None,
+            type_name=None,
+            bulk_concurrency=None,
+            batch_size=None,
+            compression_level=None,
+            llapi=None,
+            **kwargs):
+        if url is None:
+            url = settings.ZOMBODB_ELASTICSEARCH_URL
+
+        self.url = url
+        self.shards = shards
+        self.replicas = replicas
+        self.alias = alias
+        self.refresh_interval = refresh_interval
+        self.type_name = type_name
+        self.bulk_concurrency = bulk_concurrency
+        self.batch_size = batch_size
+        self.compression_level = compression_level
+        self.llapi = llapi
+        super().__init__(**kwargs)
+
     def _get_row_type_name(self):
         # should be less than 63 (DatabaseOperations.max_name_length),
         # since Index.max_name_length is 30
@@ -57,12 +86,6 @@ class ZomboDBIndex(PostgresIndex):
 
     def create_sql(self, model, schema_editor, using=''):
         statement = super().create_sql(model, schema_editor)
-        with_params = self.get_with_params()
-        if with_params:
-            statement.parts['extra'] = 'WITH (%s) %s' % (
-                ', '.join(with_params),
-                statement.parts['extra'],
-            )
         row_type = schema_editor.quote_name(self._get_row_type_name())
         return ZomboDBIndexStatementAdapter(
             statement, model, schema_editor, self.fields, row_type)
@@ -71,3 +94,32 @@ class ZomboDBIndex(PostgresIndex):
         sql = super().remove_sql(model, schema_editor)
         row_type = schema_editor.quote_name(self._get_row_type_name())
         return sql + ('; DROP TYPE IF EXISTS %s;' % row_type)
+
+    def _format_param_value(self, value, param_type):
+        if param_type == str:
+            value_formatted = '"' + value + '"'
+        elif param_type == int:
+            value_formatted = str(value)
+        else:  # param_type == bool
+            value_formatted = 'true' if value else 'false'
+        return value_formatted
+
+    def get_with_params(self):
+        with_params = []
+        for param, value, param_type in [
+            ('url', self.url, str),
+            ('shards', self.shards, int),
+            ('replicas', self.replicas, int),
+            ('alias', self.alias, str),
+            ('refresh_interval', self.refresh_interval, str),
+            ('type_name', self.type_name, str),
+            ('bulk_concurrency', self.bulk_concurrency, int),
+            ('batch_size', self.batch_size, int),
+            ('compression_level', self.compression_level, int),
+            ('llapi', self.llapi, bool),
+        ]:
+            if value is not None:
+                value_formatted = self._format_param_value(value, param_type)
+                with_params.append('%s = %s' % (param, value_formatted))
+
+        return with_params

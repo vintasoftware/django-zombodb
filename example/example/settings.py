@@ -2,6 +2,12 @@ import os
 
 from decouple import config
 
+# django-zombodb settings
+
+ZOMBODB_ELASTICSEARCH_URL = 'http://localhost:12345/'
+
+# Django settings
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
