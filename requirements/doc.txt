@@ -4,41 +4,35 @@
 #
 #    pip-compile --output-file requirements/doc.txt requirements/base.in requirements/doc.in
 #
-alabaster==0.7.11         # via sphinx
-amqp==2.3.2               # via kombu
+alabaster==0.7.12         # via sphinx
 babel==2.6.0              # via sphinx
-billiard==3.5.0.3         # via celery
-bleach==2.1.3             # via readme-renderer
-celery==4.2.0
-certifi==2018.4.16        # via requests
-cffi==1.11.5              # via cmarkgfm
+bleach==3.1.0             # via readme-renderer
+certifi==2018.11.29       # via requests
 chardet==3.0.4            # via doc8, requests
-cmarkgfm==0.4.2           # via readme-renderer
-django-model-utils==3.1.2
-django==2.0.7
+django==2.1.5
 doc8==0.8.0
 docutils==0.14            # via doc8, readme-renderer, restructuredtext-lint, sphinx
-future==0.16.0            # via readme-renderer
-html5lib==1.0.1           # via bleach
-idna==2.7                 # via requests
-imagesize==1.0.0          # via sphinx
+elasticsearch-dsl==6.3.1
+elasticsearch==6.3.1
+idna==2.8                 # via requests
+imagesize==1.1.0          # via sphinx
 jinja2==2.10              # via sphinx
-kombu==4.2.1              # via celery
-markupsafe==1.0           # via jinja2
-packaging==17.1           # via sphinx
-pbr==4.1.0                # via stevedore
-pycparser==2.18           # via cffi
-pygments==2.2.0           # via readme-renderer, sphinx
-pyparsing==2.2.0          # via packaging
-pytz==2018.5              # via babel, celery, django
-readme-renderer==21.0
-requests==2.19.1          # via sphinx
-restructuredtext-lint==1.1.3  # via doc8
-six==1.11.0               # via bleach, doc8, html5lib, packaging, readme-renderer, sphinx, stevedore
+markupsafe==1.1.0         # via jinja2
+packaging==19.0           # via sphinx
+pbr==5.1.2                # via stevedore
+psycopg2==2.7.7
+pygments==2.3.1           # via readme-renderer, sphinx
+pyparsing==2.3.1          # via packaging
+python-dateutil==2.8.0    # via elasticsearch-dsl
+python-decouple==3.1
+pytz==2018.9              # via babel, django
+readme-renderer==24.0
+requests==2.21.0          # via sphinx
+restructuredtext-lint==1.2.2  # via doc8
+six==1.12.0               # via bleach, doc8, elasticsearch-dsl, packaging, python-dateutil, readme-renderer, sphinx, stevedore
 snowballstemmer==1.2.1    # via sphinx
-sphinx==1.7.5
+sphinx==1.8.4
 sphinxcontrib-websupport==1.1.0  # via sphinx
-stevedore==1.28.0         # via doc8
-urllib3==1.23             # via requests
-vine==1.1.4               # via amqp
-webencodings==0.5.1       # via html5lib
+stevedore==1.30.0         # via doc8
+urllib3==1.24.1           # via elasticsearch, requests
+webencodings==0.5.1       # via bleach
