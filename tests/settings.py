@@ -15,7 +15,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'USER': 'django_zombodb',
         'NAME': 'django_zombodb',
-        'PASSWORD': '',
+        'PASSWORD': 'password',
         'HOST': '127.0.0.1',
         'PORT': config('POSTGRES_PORT', default='5432'),
         'ATOMIC_REQUESTS': False,  # False gives better stacktraces

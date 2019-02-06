@@ -1,4 +1,33 @@
-from django.contrib.postgres.indexes import PostgresIndex
+try:
+    from django.contrib.postgres.indexes import PostgresIndex
+except ImportError:
+    from django.db.models import Index
+    from django.utils.functional import cached_property
+
+    # From Django 2.1
+    class PostgresIndex(Index):
+
+        @cached_property
+        def max_name_length(self):
+            # Allow an index name longer than 30 characters when the suffix is
+            # longer than the usual 3 character limit. The 30 character limit for
+            # cross-database compatibility isn't applicable to PostgreSQL-specific
+            # indexes.
+            return Index.max_name_length - len(Index.suffix) + len(self.suffix)
+
+        def create_sql(self, model, schema_editor, using=''):
+            statement = super().create_sql(model, schema_editor, using=' USING %s' % self.suffix)
+            with_params = self.get_with_params()
+            if with_params:
+                statement.parts['extra'] = 'WITH (%s) %s' % (
+                    ', '.join(with_params),
+                    statement.parts['extra'],
+                )
+            return statement
+
+        def get_with_params(self):
+            return []
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 

@@ -2,30 +2,56 @@
 
 language: python
 
+sudo: required
+dist: xenial
+
 python:
   - "2.7"
   - "3.4"
   - "3.5"
   - "3.6"
+  - "3.7"
 
 env:
-  - DJANGO=1.11
+  - DJANGO=2.1
   - DJANGO=2.0
 
 matrix:
-  exclude:
-    - python: "2.7"
-      env: DJANGO=2.0
   include:
-    - python: "3.6"
+    - python: "3.7"
       env: TOXENV=quality
-    - python: "3.6"
+    - python: "3.7"
       env: TOXENV=docs
+
+addons:
+  postgresql: "10"
+
+before_install:
+  - ES=6.2.4
+  - sudo apt-get purge -y elasticsearch
+  - sudo apt-get update -y -qq
+  - sudo apt-get install -y wget
+  - sudo apt-get purge -y postgresql-9.1
+  - sudo apt-get purge -y postgresql-9.2
+  - sudo apt-get purge -y postgresql-9.3
+  - sudo apt-get purge -y postgresql-9.4
+  - sudo apt-get purge -y postgresql-9.5
+  - sudo apt-get purge -y postgresql-9.6
+  - sudo apt-get autoremove -y
+  - chmod -R a+rwx ~/
+  - wget --no-check-certificate https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES}.tar.gz
+  - tar xzf ./elasticsearch-${ES}.tar.gz
+  - wget --no-check-certificate https://www.zombodb.com/releases/v10-1.0.3/zombodb_xenial_pg10-10-1.0.3_amd64.deb
+  - sudo dpkg -i zombodb_xenial_pg10-10-1.0.3_amd64.deb
 
 install:
   - pip install -r requirements/travis.txt
 
 script:
+  - elasticsearch-${ES}/bin/elasticsearch -d
+  - sudo /etc/init.d/postgresql restart 10
+  - sudo su - postgres -c "psql -c \"CREATE USER django_zombodb WITH PASSWORD 'password' SUPERUSER;\""
+  - sleep 10
   - tox
 
 after_success:
