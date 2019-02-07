@@ -1,76 +1,88 @@
-=============================
+==============
 django_zombodb
-=============================
+==============
 
 .. image:: https://badge.fury.io/py/django-zombodb.svg
     :target: https://badge.fury.io/py/django-zombodb
 
-.. image:: https://travis-ci.org/fjsj/django-zombodb.svg?branch=master
-    :target: https://travis-ci.org/fjsj/django-zombodb
+.. image:: https://travis-ci.org/vintasoftware/django-zombodb.svg?branch=master
+    :target: https://travis-ci.org/vintasoftware/django-zombodb
 
-.. image:: https://codecov.io/gh/fjsj/django-zombodb/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/fjsj/django-zombodb
+.. image:: https://codecov.io/gh/vintasoftware/django-zombodb/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/vintasoftware/django-zombodb
 
-Easy Django integration with ElasticSearch through ZomboDB Postgres Extension
+Easy Django integration with ElasticSearch through `ZomboDB <https://github.com/zombodb/zombodb>`_ Postgres Extension.
+Thanks to ZomboDB, your Django models are synced in real-time with ElasticSearch! More than that: you can make
+ElasticSearch queries simply by calling the `.search` method on your querysets. Couldn't be easier!
 
 Documentation
 -------------
 
-The full documentation is at https://django-zombodb.readthedocs.io.
+The full documentation is at `<https://django-zombodb.readthedocs.io>`_.
+
 
 Quickstart
 ----------
 
-Install django_zombodb::
+Install django-zombodb: ::
 
     pip install django-zombodb
 
-Add it to your `INSTALLED_APPS`:
+Add the `SearchQuerySet` and the `ZomboDBIndex` to your model:
 
 .. code-block:: python
 
-    INSTALLED_APPS = (
-        ...
-        'django_zombodb.apps.DjangoZomboDBConfig',
-        ...
-    )
+    class Restaurant(models.Model):
+        name = models.TextField()
 
-Add django_zombodb's URL patterns:
+        objects = models.Manager.from_queryset(SearchQuerySet)()
+
+        class Meta:
+            indexes = [
+                ZomboDBIndex(fields=(
+                    'name',
+                )),
+            ]
+
+Make the migrations: ::
+
+    python manage.py makemigrations
+
+Add the `django_zombodb.operations.ZomboDBExtension()` operation to the migration you've just created:
 
 .. code-block:: python
 
-    from django_zombodb import urls as django_zombodb_urls
+    class Migration(migrations.Migration):
 
+        dependencies = [
+            ('restaurants', '0001_initial'),
+        ]
 
-    urlpatterns = [
-        ...
-        url(r'^', include(django_zombodb_urls)),
-        ...
-    ]
+        operations = [
+            django_zombodb.operations.ZomboDBExtension(),
+            ...
+        ]
 
-Features
---------
+Run the migrations: ::
 
-* TODO
+    python manage.py migrate
+
+Now you can make ElasticSearch queries directly from your model!
+
+.. code-block:: python
+
+    Restaurant.objects.filter(is_open=True).search("brazil* AND coffee~")
+
+Full Example
+------------
+
+Check `<https://github.com/vintasoftware/django-zombodb/tree/master/example>`_
 
 Running Tests
 -------------
 
-Does the code actually work?
+You need to have ElasticSearch and Postgres instances running on default ports. Then just:
 
 ::
 
-    source <YOURVIRTUALENV>/bin/activate
-    (myenv) $ pip install tox
-    (myenv) $ tox
-
-Credits
--------
-
-Tools used in rendering this package:
-
-*  Cookiecutter_
-*  `cookiecutter-djangopackage`_
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`cookiecutter-djangopackage`: https://github.com/pydanny/cookiecutter-djangopackage
+    python runtests.py

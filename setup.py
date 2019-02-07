@@ -52,7 +52,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author='Flávio Juvenal',
     author_email='flavio@vinta.com.br',
-    url='https://github.com/fjsj/django-zombodb',
+    url='https://github.com/vintasoftware/django-zombodb',
     packages=[
         'django_zombodb',
     ],
