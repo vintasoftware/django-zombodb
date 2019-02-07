@@ -44,11 +44,11 @@ coverage: ## check code coverage quickly with the default Python
 	open htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/django-zombodb.rst
+	rm -f docs/django_zombodb.rst
 	rm -f docs/modules.rst
 	sphinx-apidoc -o docs/ django_zombodb
 	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
+	DJANGO_SETTINGS_MODULE=example.example.settings $(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
 
 upgrade: ## update the requirements/*.txt files with the latest packages satisfying requirements/*.in

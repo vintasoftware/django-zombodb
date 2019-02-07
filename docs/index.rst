@@ -3,16 +3,36 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to django_zombodb's documentation!
-=================================================================
+django-zombodb documentation
+============================
 
-Contents:
+Easy Django integration with ElasticSearch through `ZomboDB <https://github.com/zombodb/zombodb>`_ Postgres Extension.
+Thanks to ZomboDB, your Django models are **synced in real-time** with ElasticSearch! Searching is also very simple: you can make
+ElasticSearch queries by just calling the ``.search`` method on your querysets. Couldn't be easier!
 
 .. toctree::
    :maxdepth: 2
+   :caption: User Guide
 
    installation
-   usage
+   integrating
+   searching
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference
+
+   django_zombodb
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Releases
+
+   changelog
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Development
+
    contributing
    authors
-   changelog

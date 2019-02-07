@@ -31,8 +31,8 @@ is open to whoever wants to implement it.
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-django_zombodb could always use more documentation, whether as part of the
-official django_zombodb docs, in docstrings, or even on the web in blog posts,
+django-zombodb could always use more documentation, whether as part of the
+official django-zombodb docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Submit Feedback
