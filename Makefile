@@ -27,8 +27,9 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 
-lint: ## check style with flake8
-	prospector
+lint: ## check linters
+	isort -rc . --check-only
+	prospector --messages-only
 
 test: ## run tests quickly with the default Python
 	python runtests.py

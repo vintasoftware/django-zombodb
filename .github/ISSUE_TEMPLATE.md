@@ -1,4 +1,6 @@
 * django_zombodb version:
+* Postgres version:
+* ZomboDB version:
 * Django version:
 * Python version:
 * Operating System:
