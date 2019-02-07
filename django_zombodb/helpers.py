@@ -11,13 +11,11 @@ from django_zombodb.indexes import ZomboDBIndex
 def get_zombodb_index_from_model(model):
     for index in model._meta.indexes:
         if isinstance(index, ZomboDBIndex):
-            break
-    else:
-        raise ImproperlyConfigured(
-            "Can't find a ZomboDBIndex at model {model}. "
-            "Did you forget it? ".format(model=model))
+            return index
 
-    return index
+    raise ImproperlyConfigured(
+        "Can't find a ZomboDBIndex at model {model}. "
+        "Did you forget it? ".format(model=model))
 
 
 def validate_query(model, query_dict_or_query):

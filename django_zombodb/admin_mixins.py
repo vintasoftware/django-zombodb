@@ -1,8 +1,8 @@
 
-from django.utils.translation import gettext as _
 from django.contrib.admin.views.main import SEARCH_VAR
 from django.db.models import FloatField
 from django.db.models.expressions import Value
+from django.utils.translation import gettext as _
 
 from django_zombodb.helpers import validate_query
 
@@ -14,7 +14,7 @@ class ZomboDBAdminMixin:
         get_search_fields is unnecessary if ZomboDBAdminMixin is used.
         But since search_form.html uses this, we'll return a placeholder tuple
         """
-        return ('-placeholder-')
+        return ('-placeholder-',)
 
     def _check_if_valid_search(self, request):
         search_term = request.GET.get(SEARCH_VAR, '')

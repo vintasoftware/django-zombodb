@@ -2,6 +2,7 @@ import os
 
 from decouple import config
 
+
 # django-zombodb settings
 
 ZOMBODB_ELASTICSEARCH_URL = 'http://localhost:9200/'
@@ -13,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
 
-SECRET_KEY = 'secret'
+SECRET_KEY = 'secret'  # noqa
 
 DEBUG = True
 

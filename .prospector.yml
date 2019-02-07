@@ -18,8 +18,7 @@ pep8:
     - D105
     - D205
     - D400
-    - N802  # function name should be lowercase, breaks on tests
-    - N806
+    - N811  # constant imported as non constant, breaks for Django's `Q`
   options:
     max-line-length: 100
 
@@ -29,10 +28,14 @@ pyflakes:
 
 pylint:
   disable:
-    - too-few-public-methods
+    - too-many-arguments
     - invalid-name
-    - no-self-use
     - no-member
+    - no-self-use
+    - protected-access
+    - super-init-not-called
+    - too-few-public-methods
+    - too-many-instance-attributes
   options:
     max-line-length: 100
     max-parents: 15
@@ -52,3 +55,4 @@ ignore-patterns:
   - setup.py
   - runtests.py
   - manage.py
+  - .tox/.+

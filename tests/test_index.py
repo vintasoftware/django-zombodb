@@ -1,10 +1,10 @@
-from django.test import TestCase, override_settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connection
+from django.test import TestCase, override_settings
 
 from django_zombodb.indexes import ZomboDBIndex
 
-from .models import IntegerArrayModel, DateTimeArrayModel
+from .models import DateTimeArrayModel, IntegerArrayModel
 
 
 # Based on django/tests/postgres_tests/test_indexes.py

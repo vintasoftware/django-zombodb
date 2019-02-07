@@ -31,7 +31,7 @@ lint: ## check style with flake8
 	prospector
 
 test: ## run tests quickly with the default Python
-	python runtests.py tests
+	python runtests.py
 
 test-all: ## run tests on every Python version with tox
 	tox
@@ -62,13 +62,9 @@ upgrade: ## update the requirements/*.txt files with the latest packages satisfy
 	sed '/django==/d' requirements/test.txt > requirements/test.tmp
 	mv requirements/test.tmp requirements/test.txt
 
-upgrade_private: ## update requirements/private.txt with the latest packages satisfying requirements/private.in
-	pip install -q pip-tools
-	pip-compile --upgrade -o requirements/private.txt requirements/private.in
-
 requirements: ## install development environment requirements
-	pip install -qr requirements/dev.txt --exists-action w
-	pip-sync requirements/dev.txt requirements/private.txt requirements/test.txt
+	pip install -qr requirements/dev.txt -qr requirements/test.txt -qr requirements/quality.txt --exists-action w
+	pip-sync requirements/dev.txt requirements/doc.txt requirements/quality.txt requirements/test.txt
 
 release: clean ## package and upload a release
 	python setup.py sdist upload

@@ -1,13 +1,13 @@
 from django.db import connection, models
+from django.db.models.expressions import RawSQL
+
+from elasticsearch.serializer import JSONSerializer
+from elasticsearch_dsl import Search
+from elasticsearch_dsl.exceptions import UnknownDslObject
+from elasticsearch_dsl.query import Q as ElasticSearchQ
 
 from django_zombodb.exceptions import InvalidElasticSearchQuery
 from django_zombodb.helpers import validate_query
-from django.db.models.expressions import RawSQL
-
-from elasticsearch_dsl import Search
-from elasticsearch_dsl.query import Q as ElasticSearchQ
-from elasticsearch_dsl.exceptions import UnknownDslObject
-from elasticsearch.serializer import JSONSerializer
 
 
 class SearchQuerySetMixin:

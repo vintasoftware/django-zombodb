@@ -1,9 +1,10 @@
-from django.db import models
+import uuid
+
 from django.contrib.postgres.fields import ArrayField
+from django.db import models
+
 from django_zombodb.indexes import ZomboDBIndex
 from django_zombodb.querysets import SearchQuerySet
-
-import uuid
 
 
 class Restaurant(models.Model):

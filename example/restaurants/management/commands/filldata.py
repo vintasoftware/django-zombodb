@@ -1,8 +1,8 @@
 import os
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import connection
-from django.conf import settings
 
 from restaurants.models import Restaurant
 
@@ -63,7 +63,7 @@ class Command(BaseCommand):
                     phone,
                     email,
                     COALESCE(website, ''),
-                    regexp_split_to_array(categories, '\s*,\s*')
+                    regexp_split_to_array(categories, '\\s*,\\s*')
                 FROM t;
             ''')
 

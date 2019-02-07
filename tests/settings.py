@@ -1,9 +1,10 @@
 # -*- coding: utf-8
-from __future__ import unicode_literals, absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import django
 
 from decouple import config
+
 
 DEBUG = False
 USE_TZ = True
