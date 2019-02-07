@@ -2,6 +2,7 @@
 
 from django.db import migrations
 import django_zombodb.indexes
+import django_zombodb.operations
 
 
 class Migration(migrations.Migration):
@@ -11,6 +12,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        django_zombodb.operations.ZomboDBExtension(),
         migrations.AddIndex(
             model_name='restaurant',
             index=django_zombodb.indexes.ZomboDBIndex(fields=['name', 'street', 'zip_code', 'city', 'state', 'phone', 'categories'], name='restaurants_name_72ba02_zombodb'),

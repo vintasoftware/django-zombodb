@@ -4,7 +4,7 @@ from decouple import config
 
 # django-zombodb settings
 
-ZOMBODB_ELASTICSEARCH_URL = 'http://localhost:12345/'
+ZOMBODB_ELASTICSEARCH_URL = 'http://localhost:9200/'
 
 # Django settings
 
@@ -67,7 +67,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'USER': 'django_zombodb_test',
         'NAME': 'django_zombodb_test',
-        'PASSWORD': '',
+        'PASSWORD': 'password',
         'HOST': '127.0.0.1',
         'PORT': config('POSTGRES_PORT', default='5432'),
         'ATOMIC_REQUESTS': False,  # False gives better stacktraces
