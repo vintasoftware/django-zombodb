@@ -2,101 +2,107 @@
 Searching
 =========
 
-On models with :py:class:`~django_zombodb.indexes.ZomboDBIndex` and :py:class:`~django_zombodb.querysets.SearchQuerySet`, you can perform ElasticSearch queries. Here's how:
+On models with :py:class:`~django_zombodb.indexes.ZomboDBIndex`, :py:class:`~django_zombodb.querysets.SearchQuerySet`/:py:class:`~django_zombodb.querysets.SearchQuerySetMixin` supports various kinds of Elasticsearch queries:
 
-search method
--------------
+query_string_search
+-------------------
 
-The :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.search` method of :py:class:`~django_zombodb.querysets.SearchQuerySet`/:py:class:`~django_zombodb.querysets.SearchQuerySetMixin` supports various kinds of ElasticSearch queries:
-
-Query string queries
-~~~~~~~~~~~~~~~~~~~~
-
-If the argument passed to the :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.search` method is a Python ``str``, it'll be interpreted as an ElasticSearch `query string <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax>`_.
+The :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.query_string_search` method implements the simplest type of Elasticsearch queries: the ones with the `query string syntax <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax>`_. To use it, just pass as an argument a string that follows the query string syntax.
 
 .. code-block:: python
 
-    Restaurant.objects.search("brasil~ AND steak*")
+    Restaurant.objects.query_string_search("brasil~ AND steak*")
 
-elasticsearch-dsl-py queries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+dsl_search
+----------
 
-Query string syntax is very limited. For supporting all kinds of ElasticSearch queries, the :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.search` method accepts arguments of `elasticsearch-dsl-py <https://elasticsearch-dsl.readthedocs.io/en/latest/search_dsl.html#queries>`_ ``Query`` objects. Those objects have the same representation power of the `ElasticSearch JSON Query DSL <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html>`_, and in fact the Python and JSON DSLs are very similar. You can do "match", "term", and even compound queries like "bool".
+The query string syntax is user-friendly, but it's limited. For supporting all kinds of Elasticsearch queries, the recommended way is to use the :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.dsl_search` method. It accepts arguments of `elasticsearch-dsl-py <https://elasticsearch-dsl.readthedocs.io/en/latest/search_dsl.html#queries>`_ ``Query`` objects. Those objects have the same representation power of the `Elasticsearch JSON Query DSL <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html>`_. You can do "match", "term", and even compound queries like "bool".
 
 Here we're using the elasticsearch-dsl-py ``Q`` shortcut to create ``Query`` objects:
 
 .. code-block:: python
 
-    from elasticsearch_dsl import Q as ElasticSearchQ
+    from elasticsearch_dsl import Q as ElasticsearchQ
 
-    query = ElasticSearchQ(
+    query = ElasticsearchQ(
         'bool',
         must=[
-            ElasticSearchQ('match', name='pizza'),
-            ElasticSearchQ('match', street='school')
+            ElasticsearchQ('match', name='pizza'),
+            ElasticsearchQ('match', street='school')
         ]
     )
-    Restaurant.objects.search(query)
+    Restaurant.objects.dsl_search(query)
 
-dict queries
-~~~~~~~~~~~~
+dict_search
+-----------
 
-If you pass a dict to :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.search`, it'll be processed by elasticsearch-dsl-py ``Q`` shortcut. That means if it can be converted to a valid ElasticSearch JSON, the search will succeed. Since elasticsearch-dsl-py is being used here, it's safe to pass ``date``, ``datetime``, ``Decimal``, and ``UUID`` as dict values.
+If you already have a Elasticsearch JSON query mounted as a ``dict``, use the :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.dict_search` method. The ``dict`` will be serialized using the ``JSONSerializer`` of elasticsearch-py, the official Python Elasticsearch client. This means it's safe to pass ``date``, ``datetime``, ``Decimal``, and ``UUID`` values inside the dict.
 
-.. note::
 
-    By default, the ``validate`` parameter of the :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.search` method is ``False``. This means no ElasticSearch-side validation will be made, but you may get an :py:class:`~django_zombodb.exceptions.InvalidElasticSearchQuery` if you pass a ``dict`` query that elasticsearch-dsl-py can't understand.
+Validation
+----------
 
-Validation and Exception
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you're receiving queries from the end-user, particularly query string queries, you should call :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.search` with ``validate=True``. This will perform ElasticSearch-side validation through the `Validate API <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-validate.html>`_. When doing that, :py:class:`~django_zombodb.exceptions.InvalidElasticSearchQuery` may be raised.
+If you're receiving queries from the end-user, particularly query string queries, you should call the search methods with ``validate=True``. This will perform Elasticsearch-side validation through the `Validate API <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-validate.html>`_. When doing that, :py:class:`~django_zombodb.exceptions.InvalidElasticsearchQuery` may be raised.
 
 .. code-block:: python
 
-    from django_zombodb.exceptions import InvalidElasticSearchQuery
+    from django_zombodb.exceptions import InvalidElasticsearchQuery
 
     queryset = Restaurant.objects.all()
     try:
-        queryset = queryset.search("AND steak*", validate=True)
-    except InvalidElasticSearchQuery:
+        queryset = queryset.query_string_search("AND steak*", validate=True)
+    except InvalidElasticsearchQuery:
         messages.error(request, "Invalid search query. Not filtering by search.")
 
-Sort and score
-~~~~~~~~~~~~~~
+Sorting by score
+----------------
 
-By default, the resulting queryset from :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.search` method is unordered. You can get results ordered by ElasticSearch's score passing ``sort=True``.
+By default, the resulting queryset from the search methods is unordered. You can get results ordered by Elasticsearch's score passing ``sort=True``.
 
 .. code-block:: python
 
-    Restaurant.objects.search("brasil~ AND steak*", sort=True)
+    Restaurant.objects.query_string_search("brasil~ AND steak*", sort=True)
 
 Alternatively, if you want to combine with your own ``order_by``, you can use the method :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.annotate_score`:
 
 .. code-block:: python
 
-    Restaurant.objects.search(
+    Restaurant.objects.query_string_search(
         "brazil* AND steak*"
     ).annotate_score(
         attr='zombodb_score'
     ).order_by('-zombodb_score', 'name', 'pk')
 
 Lazy and Chainable
-~~~~~~~~~~~~~~~~~~
+------------------
 
-The :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.search` method is just like a regular ``filter`` method: it returns a regular Django ``QuerySet`` that supports all operations, it's lazy, and it's chainable. Therefore, you can do things like:
+The :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.search` method is just like the traditional ``filter`` method: it returns a regular Django ``QuerySet`` that supports all operations, it's lazy, and it's chainable. Therefore, you can do things like:
 
 .. code-block:: python
 
     Restaurant.objects.filter(
         name__startswith='Pizza'
-    ).search(
+    ).query_string_search(
         'name:Hut'
     ).filter(
         street__contains='Road'
     )
 
-Limitations
-~~~~~~~~~~~
+.. warning::
 
-Currently django-zombodb doesn't support ZomboDB's `limit, offset, sort functions <https://github.com/zombodb/zombodb/blob/master/QUERY-DSL.md#sort-and-limit-functions>`_ that work on the ElasticSearch side. Regular SQL limit/offset/order by works fine, so traditional QuerySet operations work.
+    It's fine to call ``filter``/``exclude``/etc. before and after search. Best way would be using only a Elasticsearch query, but that might not be always possible. However, it's definitely **slow** to call search methods multiple times on the same queryset! **Please avoid this**:
+
+    .. code-block:: python
+
+        Restaurant.objects.query_string_search(
+            'name:Pizza'
+        ).query_string_search(
+            'name:Hut'
+        )
+
+    While that may work as expected, it's `extremely inneficient <https://github.com/zombodb/zombodb/issues/335>`_. Instead, use compound queries like `"bool" <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html#query-dsl-bool-query>`_. They'll be much more efficient. Note that "bool" queries might be quite confusing to implement. Check tutorials about them, like `this one <https://engineering.carsguide.com.au/elasticsearch-demystifying-the-bool-query-11da737a4efb>`_.
+
+Limitations
+-----------
+
+Currently django-zombodb doesn't support ZomboDB's `limit, offset, sort functions <https://github.com/zombodb/zombodb/blob/master/QUERY-DSL.md#sort-and-limit-functions>`_ that work on the Elasticsearch side. Regular SQL LIMIT/OFFSET/ORDER BY works fine, so traditional QuerySet operations work.

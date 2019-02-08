@@ -195,7 +195,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'django-zombodb.tex', u'django_zombodb Documentation',
+  ('index', 'django-zombodb.tex', u'django-zombodb Documentation',
    u'Flávio Juvenal', 'manual'),
 ]
 
@@ -225,7 +225,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'django-zombodb', u'django_zombodb Documentation',
+    ('index', 'django-zombodb', u'django-zombodb Documentation',
      [u'Flávio Juvenal'], 1)
 ]
 
@@ -239,8 +239,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'django-zombodb', u'django_zombodb Documentation',
-   u'Flávio Juvenal', 'django-zombodb', 'One line description of project.',
+  ('index', 'django-zombodb', u'django-zombodb Documentation',
+   u'Flávio Juvenal', 'django-zombodb',
+   'Django + ZomboDB: best way to integrate Django with Elasticsearch',
    'Miscellaneous'),
 ]
 

@@ -1,8 +1,8 @@
 ==============================
-Integrating with ElasticSearch
+Integrating with Elasticsearch
 ==============================
 
-ZomboDB integrates Postgres with ElasticSearch through Postgres indexes. You can learn more about how ZomboDB works by reading its `tutorial <https://github.com/zombodb/zombodb/blob/master/TUTORIAL.md>`_, but you don't need that to proceed. Just know that the integration is possible due to indexes and that ZomboDB is a Postgres extension.
+ZomboDB integrates Postgres with Elasticsearch through Postgres indexes. You can learn more about how ZomboDB works by reading its `tutorial <https://github.com/zombodb/zombodb/blob/master/TUTORIAL.md>`_, but you don't need that to proceed. Just know that the integration is possible due to indexes and that ZomboDB is a Postgres extension.
 
 Installing ZomboDB extension
 ----------------------------
@@ -52,7 +52,7 @@ Imagine you have the following model:
         name = models.TextField()
         street = models.TextField()
 
-To integrate it with ElasticSearch, we need to add a :py:class:`~django_zombodb.indexes.ZomboDBIndex` to it:
+To integrate it with Elasticsearch, we need to add a :py:class:`~django_zombodb.indexes.ZomboDBIndex` to it:
 
 .. code-block:: python
 
@@ -68,7 +68,7 @@ To integrate it with ElasticSearch, we need to add a :py:class:`~django_zombodb.
                 )),
             ]
 
-Now that model will support ElasticSearch queries for both ``name`` and ``street`` fields. But to perform those searches, we need it to use the custom queryset :py:class:`~django_zombodb.querysets.SearchQuerySet`:
+Now that model will support Elasticsearch queries for both ``name`` and ``street`` fields. But to perform those searches, we need it to use the custom queryset :py:class:`~django_zombodb.querysets.SearchQuerySet`:
 
 .. code-block:: python
 
@@ -90,4 +90,4 @@ Now that model will support ElasticSearch queries for both ``name`` and ``street
 
     If you already have a custom queryset on your model, make it inherit from :py:class:`~django_zombodb.querysets.SearchQuerySetMixin`.
 
-Move forward to learn how to perform ElasticSearch queries through your model.
+Move forward to learn how to perform Elasticsearch queries through your model.

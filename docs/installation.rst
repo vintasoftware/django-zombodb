@@ -22,4 +22,4 @@ Set ``ZOMBODB_ELASTICSEARCH_URL`` on your settings.py. That will be the default 
 
     ZOMBODB_ELASTICSEARCH_URL = 'http://localhost:9200/'
 
-Move forward to learn how to integrate your models with ElasticSearch.
+Move forward to learn how to integrate your models with Elasticsearch.

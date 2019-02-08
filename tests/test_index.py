@@ -98,7 +98,7 @@ class ZomboDBIndexNoURLTests(TestCase):
 @override_settings(ZOMBODB_ELASTICSEARCH_URL='http://localhost:9200/')
 class ZomboDBIndexSchemaTests(TestCase):
     '''
-    This test needs a running ElasticSearch instance at http://localhost:9200/
+    This test needs a running Elasticsearch instance at http://localhost:9200/
     '''
 
     def get_constraints(self, table):

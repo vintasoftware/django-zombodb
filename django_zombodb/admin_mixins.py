@@ -4,7 +4,7 @@ from django.db.models import FloatField
 from django.db.models.expressions import Value
 from django.utils.translation import gettext as _
 
-from django_zombodb.helpers import validate_query
+from django_zombodb.helpers import validate_query_string
 
 
 class ZomboDBAdminMixin:
@@ -21,7 +21,7 @@ class ZomboDBAdminMixin:
         if not search_term:
             return False
 
-        return validate_query(self.model, search_term)
+        return validate_query_string(self.model, search_term)
 
     def get_list_display(self, request):
         request._has_valid_search = self._check_if_valid_search(request)
@@ -38,7 +38,7 @@ class ZomboDBAdminMixin:
     def get_search_results(self, request, queryset, search_term):
         if search_term:
             if request._has_valid_search:
-                queryset = queryset.search(
+                queryset = queryset.query_string_search(
                     search_term, validate=False, sort=False, score_attr='zombodb_score'
                 ).annotate_score()
             else:

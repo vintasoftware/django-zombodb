@@ -48,7 +48,7 @@ history = open('CHANGELOG.rst').read().replace('.. :changelog:', '')
 setup(
     name='django-zombodb',
     version=version,
-    description="""Easy Django integration with ElasticSearch through ZomboDB Postgres Extension""",
+    description="""Easy Django integration with Elasticsearch through ZomboDB Postgres Extension""",
     long_description=readme + '\n\n' + history,
     author='Flávio Juvenal',
     author_email='flavio@vinta.com.br',

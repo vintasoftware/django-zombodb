@@ -1,2 +1,2 @@
-class InvalidElasticSearchQuery(Exception):
+class InvalidElasticsearchQuery(Exception):
     pass

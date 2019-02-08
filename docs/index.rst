@@ -6,9 +6,9 @@
 django-zombodb documentation
 ============================
 
-Easy Django integration with ElasticSearch through `ZomboDB <https://github.com/zombodb/zombodb>`_ Postgres Extension.
-Thanks to ZomboDB, **your Django models are synced with ElasticSearch after every transaction**! Searching is also very simple: you can make
-ElasticSearch queries by just calling the ``.search`` method on your querysets. Couldn't be easier!
+Easy Django integration with Elasticsearch through `ZomboDB <https://github.com/zombodb/zombodb>`_ Postgres Extension.
+Thanks to ZomboDB, **your Django models are synced with Elasticsearch after every transaction**! Searching is also very simple: you can make
+Elasticsearch queries by just calling one of the search methods on your querysets. Couldn't be easier!
 
 .. toctree::
    :maxdepth: 2
