@@ -12,7 +12,7 @@ django-zombodb
     :target: https://codecov.io/gh/vintasoftware/django-zombodb
 
 Easy Django integration with ElasticSearch through `ZomboDB <https://github.com/zombodb/zombodb>`_ Postgres Extension.
-Thanks to ZomboDB, your Django models are **synced in real-time** with ElasticSearch! Searching is also very simple: you can make
+Thanks to ZomboDB, **your Django models are synced with ElasticSearch after every transaction**! Searching is also very simple: you can make
 ElasticSearch queries by just calling the ``.search`` method on your querysets. Couldn't be easier!
 
 Documentation
