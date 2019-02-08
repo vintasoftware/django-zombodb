@@ -4,7 +4,7 @@ from django.db.models.expressions import RawSQL
 from elasticsearch_dsl import Search
 
 from django_zombodb.exceptions import InvalidElasticsearchQuery
-from django_zombodb.helpers import json_serializer, validate_query_string, validate_query_dict
+from django_zombodb.helpers import json_serializer, validate_query_dict, validate_query_string
 
 
 class SearchQuerySetMixin:
