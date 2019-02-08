@@ -24,13 +24,13 @@ The full documentation is at `<https://django-zombodb.readthedocs.io>`_.
 Quickstart
 ----------
 
-Install ZomboDB (instructions `here <https://github.com/zombodb/zombodb/blob/master/INSTALL.md`>_)
+1. Install ZomboDB (instructions `here <https://github.com/zombodb/zombodb/blob/master/INSTALL.md>`_)
 
 Install django-zombodb: ::
 
     pip install django-zombodb
 
-Add the `SearchQuerySet` and the `ZomboDBIndex` to your model:
+2. Add the `SearchQuerySet` and the `ZomboDBIndex` to your model:
 
 .. code-block:: python
 
@@ -46,11 +46,11 @@ Add the `SearchQuerySet` and the `ZomboDBIndex` to your model:
                 )),
             ]
 
-Make the migrations: ::
+3. Make the migrations: ::
 
     python manage.py makemigrations
 
-Add the `django_zombodb.operations.ZomboDBExtension()` operation to the migration you've just created:
+4. Add `django_zombodb.operations.ZomboDBExtension()` as the first operation of the migration you've just created:
 
 .. code-block:: python
 
@@ -67,11 +67,11 @@ Add the `django_zombodb.operations.ZomboDBExtension()` operation to the migratio
             ...
         ]
 
-Run the migrations: ::
+5. Run the migrations (Postgres user must be SUPERUSER to create the ZomboDB extension): ::
 
     python manage.py migrate
 
-Now you can make Elasticsearch queries directly from your model!
+6. Done! Now you can make Elasticsearch queries directly from your model:
 
 .. code-block:: python
 
@@ -85,7 +85,7 @@ Check `<https://github.com/vintasoftware/django-zombodb/tree/master/example>`_
 Running Tests
 -------------
 
-You need to have Elasticsearch and Postgres instances running on default ports. Then just:
+You need to have Elasticsearch and Postgres instances running on default ports. Then just do:
 
 ::
 
