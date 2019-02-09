@@ -7,6 +7,113 @@ from django_zombodb.indexes import ZomboDBIndex
 from .models import DateTimeArrayModel, IntegerArrayModel
 
 
+class ZomboDBIndexStatementAdapterTests(TestCase):
+
+    def setUp(self):
+        self.index_name = 'my_test_index'
+        self.index = ZomboDBIndex(
+            fields=['datetimes', 'dates', 'times'],
+            name=self.index_name,
+            url='http://localhost:9999/',
+            shards=4,
+            replicas=1,
+            alias='my-test-index-alias',
+            refresh_interval='1s',
+            type_name='doc',
+            bulk_concurrency=10,
+            batch_size=8388608,
+            compression_level=9,
+            llapi=False,
+        )
+        with connection.schema_editor() as editor:
+            self.statement_adapter = self.index.create_sql(
+                model=DateTimeArrayModel,
+                schema_editor=editor,
+                using='')
+            self.repr = repr(self.statement_adapter)
+            self.str = str(self.statement_adapter)
+
+    def test_references_table(self):
+        self.assertIs(
+            self.statement_adapter.references_table(DateTimeArrayModel._meta.db_table), True)
+        self.assertIs(
+            self.statement_adapter.references_table(IntegerArrayModel._meta.db_table), False)
+
+    def test_references_column(self):
+        self.assertIs(
+            self.statement_adapter.references_column(
+                DateTimeArrayModel._meta.db_table,
+                'datetimes'
+            ), True)
+        self.assertIs(
+            self.statement_adapter.references_column(
+                DateTimeArrayModel._meta.db_table,
+                'other'
+            ), False)
+
+    def test_rename_table_references(self):
+        self.statement_adapter.rename_table_references(
+            DateTimeArrayModel._meta.db_table,
+            'other')
+        self.assertEqual(
+            repr(self.statement_adapter.parts['table']),
+            '<Table \'"other"\'>')
+
+    def test_rename_column_references(self):
+        self.statement_adapter.rename_column_references(
+            DateTimeArrayModel._meta.db_table,
+            'dates',
+            'other')
+        self.assertEqual(
+            repr(self.statement_adapter.parts['columns']),
+            '<Columns \'"datetimes", "other", "times"\'>')
+
+    def test_repr(self):
+        self.assertEqual(
+            self.repr,
+            '<ZomboDBIndexStatementAdapter \'CREATE TYPE "my_test_index_row_type" AS '
+            '(datetimes timestamp with time zone[], dates date[], times time[]); '
+            'CREATE INDEX "my_test_index" ON "tests_datetimearraymodel" '
+            'USING zombodb ((ROW("datetimes", "dates", "times")::"my_test_index_row_type")) '
+            'WITH (url = "http://localhost:9999/", shards = 4, replicas = 1, '
+            'alias = "my-test-index-alias", refresh_interval = "1s", type_name = "doc", '
+            'bulk_concurrency = 10, batch_size = 8388608, compression_level = 9, llapi = false) \'>'
+        )
+
+    def test_str(self):
+        self.assertEqual(
+            self.str,
+            'CREATE TYPE "my_test_index_row_type" '
+            'AS (datetimes timestamp with time zone[], dates date[], times time[]); '
+            'CREATE INDEX "my_test_index" ON "tests_datetimearraymodel" '
+            'USING zombodb ((ROW("datetimes", "dates", "times")::"my_test_index_row_type")) '
+            'WITH (url = "http://localhost:9999/", shards = 4, replicas = 1, '
+            'alias = "my-test-index-alias", refresh_interval = "1s", type_name = "doc", '
+            'bulk_concurrency = 10, batch_size = 8388608, compression_level = 9, llapi = false) '
+        )
+
+
+class ZomboDBIndexRemoveSQLTests(TestCase):
+
+    def setUp(self):
+        self.index_name = 'my_other_test_index'
+        self.index = ZomboDBIndex(
+            fields=['dates', 'times'],
+            name=self.index_name,
+            url='http://localhost:7777/'
+        )
+        with connection.schema_editor() as editor:
+            self.remove_sql_str = self.index.remove_sql(
+                model=DateTimeArrayModel,
+                schema_editor=editor)
+
+    def test_remove_sql_str(self):
+        self.assertEqual(
+            self.remove_sql_str,
+            'DROP INDEX IF EXISTS "my_other_test_index"; '
+            'DROP TYPE IF EXISTS "my_other_test_index_row_type";')
+
+
 # Based on django/tests/postgres_tests/test_indexes.py
 @override_settings(ZOMBODB_ELASTICSEARCH_URL='http://localhost:9999')
 class ZomboDBIndexTests(TestCase):
@@ -27,9 +134,9 @@ class ZomboDBIndexTests(TestCase):
         self.assertNotEqual(index_with_default_url, index_with_other_url)
 
     def test_name_auto_generation(self):
-        index = ZomboDBIndex(fields=['datetimes'])
+        index = ZomboDBIndex(fields=['datetimes', 'dates', 'times'])
         index.set_name_with_model(DateTimeArrayModel)
-        self.assertEqual(index.name, 'tests_datet_datetim_889872_zombodb')
+        self.assertEqual(index.name, 'tests_datet_datetim_22445c_zombodb')
 
     def test_deconstruction(self):
         index = ZomboDBIndex(
