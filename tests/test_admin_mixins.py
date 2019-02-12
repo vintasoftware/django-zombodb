@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import TransactionTestCase
 from django.test.client import RequestFactory
-from django.utils.http import urlencode
+from django.urls import reverse
 
 from django_zombodb.admin_mixins import ZomboDBAdminMixin
 
@@ -10,15 +10,14 @@ from .restaurants.admin import RestaurantAdmin
 from .restaurants.models import Restaurant
 
 
-class AdminMixinsTests(TestCase):
+class AdminMixinsTests(TransactionTestCase):
     factory = RequestFactory()
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.superuser = User.objects.create_superuser(
+    def setUp(self):
+        self.superuser = User.objects.create_superuser(
             username='super', email='a@b.com', password='xxx')
 
-        cls.alcove = Restaurant.objects.create(
+        self.alcove = Restaurant.objects.create(
             url='http://example.org?thealcove',
             name='The Alcove',
             street='41-11 49th St',
@@ -30,7 +29,7 @@ class AdminMixinsTests(TestCase):
             website='https://www.facebook.com/thealcoveny/',
             categories=['Gastropub', 'Tapas', 'Bar'],
         )
-        cls.tj = Restaurant.objects.create(
+        self.tj = Restaurant.objects.create(
             url='http://example.org?tjasianbistro',
             name='TJ Asian Bistro',
             street='50-19 Skillman Ave',
@@ -42,7 +41,7 @@ class AdminMixinsTests(TestCase):
             website='http://www.tjsushi.com/',
             categories=['Sushi', 'Asian', 'Japanese'],
         )
-        cls.soleil = Restaurant.objects.create(
+        self.soleil = Restaurant.objects.create(
             url='http://example.org?cotesoleil',
             name='Côté Soleil',
             street='50-12 Skillman Ave',
@@ -55,11 +54,8 @@ class AdminMixinsTests(TestCase):
             categories=['French', 'Coffee', 'European'],
         )
 
-    def setUp(self):
-        self.client.force_login(self.superuser)
-
-    def _mocked_authenticated_request(self, url, user):
-        request = self.factory.get(url)
+    def _mocked_authenticated_request(self, url, params, user):
+        request = self.factory.get(url, params)
         request.user = user
         return request
 
@@ -69,18 +65,18 @@ class AdminMixinsTests(TestCase):
     def test_no_search(self):
         restaurant_admin = RestaurantAdmin(Restaurant, admin.site)
         request = self._mocked_authenticated_request(
-            '/restaurant/', self.superuser)
+            '/restaurant/', {}, self.superuser)
         cl = restaurant_admin.get_changelist_instance(request)
         queryset = cl.get_queryset(request)
         self.assertCountEqual(queryset, [self.alcove, self.tj, self.soleil])
 
     def test_get_search_results(self):
         restaurant_admin = RestaurantAdmin(Restaurant, admin.site)
-        search_query = urlencode({
+        search_query = {
             'q': 'sushi asian japanese 11377'
-        })
+        }
         request = self._mocked_authenticated_request(
-            '/restaurant/?' + search_query, self.superuser)
+            '/restaurant/', search_query, self.superuser)
         cl = restaurant_admin.get_changelist_instance(request)
         queryset = cl.get_queryset(request)
         self.assertEqual(list(queryset), [self.tj, self.soleil])
@@ -88,7 +84,7 @@ class AdminMixinsTests(TestCase):
     def test_no_search_annotates_zombodb_score_as_0(self):
         restaurant_admin = RestaurantAdmin(Restaurant, admin.site)
         request = self._mocked_authenticated_request(
-            '/restaurant/', self.superuser)
+            '/restaurant/', {}, self.superuser)
         cl = restaurant_admin.get_changelist_instance(request)
         queryset = cl.get_queryset(request)
         self.assertCountEqual(queryset, [self.alcove, self.tj, self.soleil])
@@ -98,14 +94,44 @@ class AdminMixinsTests(TestCase):
 
     def test_search_annotates_zombodb_score(self):
         restaurant_admin = RestaurantAdmin(Restaurant, admin.site)
-        search_query = urlencode({
+        search_query = {
             'q': 'sushi asian japanese 11377'
-        })
+        }
         request = self._mocked_authenticated_request(
-            '/restaurant/?' + search_query, self.superuser)
+            '/restaurant/', search_query, self.superuser)
         cl = restaurant_admin.get_changelist_instance(request)
         queryset = cl.get_queryset(request)
         self.assertEqual(list(queryset), [self.tj, self.soleil])
         for restaurant in queryset:
             self.assertTrue(hasattr(restaurant, 'zombodb_score'))
             self.assertGreater(restaurant.zombodb_score, 0)
+
+    def test_search_validates_query(self):
+        search_query = {
+            'q': 'sushi AND AND'
+        }
+        self.client.force_login(self.superuser)
+        response = self.client.get(
+            reverse('admin:restaurants_restaurant_changelist'),
+            search_query
+        )
+        self.assertContains(response, self.alcove.name)
+        self.assertContains(response, self.tj.name)
+        self.assertContains(response, self.soleil.name)
+        self.assertEqual(
+            [m.message for m in response.context['messages']],
+            ['Invalid search query. Not filtering by search.']
+        )
+
+    def test_search_displays_score(self):
+        search_query = {
+            'q': 'sushi asian japanese 11377'
+        }
+        self.client.force_login(self.superuser)
+        response = self.client.get(
+            reverse('admin:restaurants_restaurant_changelist'),
+            search_query
+        )
+        self.assertContains(response, self.tj.name)
+        self.assertContains(response, self.soleil.name)
+        self.assertContains(response, '<td class="field-_zombodb_score">')

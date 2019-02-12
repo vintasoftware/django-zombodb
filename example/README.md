@@ -16,7 +16,7 @@ To run this example, follow these instructions:
         sudo su - postgres -c "psql -c \"CREATE USER django_zombodb WITH PASSWORD 'password' SUPERUSER;\""
         createdb django_zombodb
 
-4. Run a ElasticSearch cluster:
+4. Run a Elasticsearch cluster:
 
         elasticsearch
         
@@ -39,4 +39,4 @@ To run this example, follow these instructions:
 
 ### Notes:
 - `django_zombodb` Postgres user needs to be a `SUPERUSER` for activating the `zombodb` extension on the newly created database. This is handled by the operation `django_zombodb.operations.ZomboDBExtension()` on the `0002` migration. If you wish you can `ALTER ROLE django_zombodb NOSUPERUSER` after running the migrations.
-- `ZOMBODB_ELASTICSEARCH_URL` on settings.py defines your ElasticSearch URL. Change it if necessary.
+- `ZOMBODB_ELASTICSEARCH_URL` on settings.py defines your Elasticsearch URL. Change it if necessary.

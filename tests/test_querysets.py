@@ -1,5 +1,5 @@
 from django.core.exceptions import ImproperlyConfigured
-from django.test import TestCase, override_settings
+from django.test import TransactionTestCase, override_settings
 
 from elasticsearch_dsl import Q as ElasticsearchQ
 from elasticsearch_dsl import Search
@@ -11,11 +11,10 @@ from .restaurants.models import Restaurant, RestaurantNoIndex
 
 
 @override_settings(ZOMBODB_ELASTICSEARCH_URL='http://localhost:9200/')
-class SearchQuerySetTests(TestCase):
+class SearchQuerySetTests(TransactionTestCase):
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.alcove = Restaurant.objects.create(
+    def setUp(self):
+        self.alcove = Restaurant.objects.create(
             url='http://example.org?thealcove',
             name='The Alcove',
             street='41-11 49th St',
@@ -27,7 +26,7 @@ class SearchQuerySetTests(TestCase):
             website='https://www.facebook.com/thealcoveny/',
             categories=['Gastropub', 'Tapas', 'Bar'],
         )
-        cls.tj = Restaurant.objects.create(
+        self.tj = Restaurant.objects.create(
             url='http://example.org?tjasianbistro',
             name='TJ Asian Bistro',
             street='50-19 Skillman Ave',
@@ -39,7 +38,7 @@ class SearchQuerySetTests(TestCase):
             website='http://www.tjsushi.com/',
             categories=['Sushi', 'Asian', 'Japanese'],
         )
-        cls.soleil = Restaurant.objects.create(
+        self.soleil = Restaurant.objects.create(
             url='http://example.org?cotesoleil',
             name='Côté Soleil',
             street='50-12 Skillman Ave',
