@@ -1,4 +1,4 @@
-# From Django 2.1
+# From Django 2.1, for Django < 2.1
 from django.db.models import Index
 from django.utils.functional import cached_property
 
