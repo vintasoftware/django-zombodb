@@ -48,9 +48,9 @@ Quickstart
 
         class Meta:
             indexes = [
-                ZomboDBIndex(fields=(
+                ZomboDBIndex(fields=[
                     'name',
-                )),
+                ]),
             ]
 
 3. Make the migrations:

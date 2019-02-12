@@ -62,10 +62,10 @@ To integrate it with Elasticsearch, we need to add a :py:class:`~django_zombodb.
 
         class Meta:
             indexes = [
-                ZomboDBIndex(fields=(
+                ZomboDBIndex(fields=[
                     'name',
                     'street',
-                )),
+                ]),
             ]
 
 Now that model will support Elasticsearch queries for both ``name`` and ``street`` fields. But to perform those searches, we need it to use the custom queryset :py:class:`~django_zombodb.querysets.SearchQuerySet`:
@@ -80,10 +80,10 @@ Now that model will support Elasticsearch queries for both ``name`` and ``street
 
         class Meta:
             indexes = [
-                ZomboDBIndex(fields=(
+                ZomboDBIndex(fields=[
                     'name',
                     'street',
-                )),
+                ]),
             ]
 
 .. note::
