@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django_zombodb',
 
     'tests',
+    'tests.restaurants',
 ]
 
 SITE_ID = 1
