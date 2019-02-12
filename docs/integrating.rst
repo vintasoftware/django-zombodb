@@ -2,7 +2,7 @@
 Integrating with Elasticsearch
 ==============================
 
-ZomboDB integrates Postgres with Elasticsearch through Postgres indexes. You can learn more about how ZomboDB works by reading its `tutorial <https://github.com/zombodb/zombodb/blob/master/TUTORIAL.md>`_, but you don't need that to proceed. Just know that the integration is possible due to indexes and that ZomboDB is a Postgres extension.
+ZomboDB integrates Postgres with Elasticsearch through Postgres indexes. If you don't know much about ZomboDB, please read its `tutorial <https://github.com/zombodb/zombodb/blob/master/TUTORIAL.md>`_ before proceeding.
 
 Installing ZomboDB extension
 ----------------------------
@@ -89,5 +89,10 @@ Now that model will support Elasticsearch queries for both ``name`` and ``street
 .. note::
 
     If you already have a custom queryset on your model, make it inherit from :py:class:`~django_zombodb.querysets.SearchQuerySetMixin`.
+
+Limitation: type mapping
+------------------------
+
+Currently django-zombodb doesn't have an API for defining `type mappings <https://www.elastic.co/guide/en/elasticsearch/reference/6.6/mapping.html>`_ or custom analyzers on Elasticsearch indexes. The types and analyzers are set according to `ZomboDB's default mappings <https://github.com/zombodb/zombodb/blob/master/TYPE-MAPPING.md#common-data-types>`_. If you wish to alter this, you'll need to manually set different Postgres types on your fields with a `RunSQL migration <https://docs.djangoproject.com/en/dev/ref/migration-operations/#runsql>`_. **The next version of django-zombodb will properly support type mapping**.
 
 Move forward to learn how to perform Elasticsearch queries through your model.

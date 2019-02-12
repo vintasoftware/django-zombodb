@@ -2,7 +2,7 @@
 Searching
 =========
 
-On models with :py:class:`~django_zombodb.indexes.ZomboDBIndex`, :py:class:`~django_zombodb.querysets.SearchQuerySet`/:py:class:`~django_zombodb.querysets.SearchQuerySetMixin` supports various kinds of Elasticsearch queries:
+On models with :py:class:`~django_zombodb.indexes.ZomboDBIndex`, use methods from :py:class:`~django_zombodb.querysets.SearchQuerySet`/:py:class:`~django_zombodb.querysets.SearchQuerySetMixin` to perform various kinds of Elasticsearch queries:
 
 query_string_search
 -------------------
@@ -36,7 +36,7 @@ Here we're using the elasticsearch-dsl-py ``Q`` shortcut to create ``Query`` obj
 dict_search
 -----------
 
-If you already have a Elasticsearch JSON query mounted as a ``dict``, use the :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.dict_search` method. The ``dict`` will be serialized using the ``JSONSerializer`` of elasticsearch-py, the official Python Elasticsearch client. This means it's safe to pass ``date``, ``datetime``, ``Decimal``, and ``UUID`` values inside the dict.
+If you already have a Elasticsearch JSON query mounted as a ``dict``, use the :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.dict_search` method. The ``dict`` will be serialized using the ``JSONSerializer`` of `elasticsearch-py <https://github.com/elastic/elasticsearch-py>`_, the official Python Elasticsearch client. This means dict values of ``date``, ``datetime``, ``Decimal``, and ``UUID`` types will be correctly serialized.
 
 
 Validation
@@ -76,7 +76,7 @@ Alternatively, if you want to combine with your own ``order_by``, you can use th
 Lazy and Chainable
 ------------------
 
-The :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.search` method is just like the traditional ``filter`` method: it returns a regular Django ``QuerySet`` that supports all operations, it's lazy, and it's chainable. Therefore, you can do things like:
+The search methods are like the traditional ``filter`` method: they return a regular Django ``QuerySet`` that supports all operations, and that's lazy and chainable. Therefore, you can do things like:
 
 .. code-block:: python
 
@@ -90,7 +90,7 @@ The :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.search` method is ju
 
 .. warning::
 
-    It's fine to call ``filter``/``exclude``/etc. before and after search. Best way would be using only a Elasticsearch query, but that might not be always possible. However, it's definitely **slow** to call search methods multiple times on the same queryset! **Please avoid this**:
+    It's fine to call ``filter``/``exclude``/etc. before and after search. If possible, the best would be using only a Elasticsearch query. However, it's definitely **slow** to call search methods multiple times on the same queryset! **Please avoid this**:
 
     .. code-block:: python
 
@@ -100,9 +100,9 @@ The :py:meth:`~django_zombodb.querysets.SearchQuerySetMixin.search` method is ju
             'name:Hut'
         )
 
-    While that may work as expected, it's `extremely inneficient <https://github.com/zombodb/zombodb/issues/335>`_. Instead, use compound queries like `"bool" <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html#query-dsl-bool-query>`_. They'll be much more efficient. Note that "bool" queries might be quite confusing to implement. Check tutorials about them, like `this one <https://engineering.carsguide.com.au/elasticsearch-demystifying-the-bool-query-11da737a4efb>`_.
+    While that may work as expected, it's `extremely inneficient <https://github.com/zombodb/zombodb/issues/335>`_. Instead, use compound queries like `"bool" <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html#query-dsl-bool-query>`_. They'll be much faster. Note that "bool" queries might be quite confusing to implement. Check tutorials about them, like `this one <https://engineering.carsguide.com.au/elasticsearch-demystifying-the-bool-query-11da737a4efb>`_.
 
 Limitations
 -----------
 
-Currently django-zombodb doesn't support ZomboDB's `limit, offset, sort functions <https://github.com/zombodb/zombodb/blob/master/QUERY-DSL.md#sort-and-limit-functions>`_ that work on the Elasticsearch side. Regular SQL LIMIT/OFFSET/ORDER BY works fine, so traditional QuerySet operations work.
+Currently django-zombodb doesn't support ZomboDB's `limit, offset, sort functions <https://github.com/zombodb/zombodb/blob/master/QUERY-DSL.md#sort-and-limit-functions>`_ that work on the Elasticsearch side. Regular SQL LIMIT/OFFSET/ORDER BY works fine, so traditional ``QuerySet`` operations work.
