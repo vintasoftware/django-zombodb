@@ -10,3 +10,4 @@ omit =
 show_missing = True
 exclude_lines =
     raise NotImplementedError
+    pragma: no cover
