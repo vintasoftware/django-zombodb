@@ -2,6 +2,7 @@ import uuid
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from django.db.models.indexes import Index
 
 from django_zombodb.indexes import ZomboDBIndex
 from django_zombodb.querysets import SearchQuerySet
@@ -24,6 +25,7 @@ class Restaurant(models.Model):
 
     class Meta:
         indexes = [
+            Index(name='other-index', fields=['url']),
             ZomboDBIndex(
                 url='http://localhost:9200/',
                 fields=[
@@ -39,6 +41,15 @@ class Restaurant(models.Model):
                 ]
             ),
         ]
+
+    def __str__(self):
+        return self.name
+
+
+class RestaurantNoIndex(models.Model):
+    name = models.TextField()
+
+    objects = models.Manager.from_queryset(SearchQuerySet)()
 
     def __str__(self):
         return self.name

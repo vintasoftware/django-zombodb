@@ -10,13 +10,13 @@ django-zombodb
     :target: https://travis-ci.org/vintasoftware/django-zombodb
     :alt: Build Status
 
-.. image:: https://codecov.io/gh/vintasoftware/django-zombodb/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/vintasoftware/django-zombodb
-    :alt: Coverage Status
-
 .. image:: https://readthedocs.org/projects/django-zombodb/badge/?version=latest
     :target: https://django-zombodb.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
+
+.. image:: https://codecov.io/gh/vintasoftware/django-zombodb/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/vintasoftware/django-zombodb
+    :alt: Coverage Status
 
 Easy Django integration with Elasticsearch through `ZomboDB <https://github.com/zombodb/zombodb>`_ Postgres Extension.
 Thanks to ZomboDB, **your Django models are synced with Elasticsearch after every transaction**! Searching is also very simple: you can make

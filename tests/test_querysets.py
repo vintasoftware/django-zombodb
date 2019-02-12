@@ -1,10 +1,11 @@
+from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, override_settings
 
 from elasticsearch_dsl import Q as ElasticsearchQ, Search
 from elasticsearch_dsl.query import Term
 
 from django_zombodb.exceptions import InvalidElasticsearchQuery
-from tests.restaurants.models import Restaurant
+from tests.restaurants.models import Restaurant, RestaurantNoIndex
 
 
 @override_settings(ZOMBODB_ELASTICSEARCH_URL='http://localhost:9200/')
@@ -236,3 +237,11 @@ class SearchQuerySetTests(TestCase):
             zip_code='11377'
         ).query_string_search('coffee')
         self.assertCountEqual(results, [self.soleil])
+
+    def test_search_fails_if_no_zombodb_index_in_model_and_validate(self):
+        with self.assertRaises(ImproperlyConfigured) as cm:
+            RestaurantNoIndex.objects.query_string_search('skillman', validate=True)
+        self.assertEqual(
+            str(cm.exception),
+            "Can't find a ZomboDBIndex at model {model}. "
+            "Did you forget it? ".format(model=RestaurantNoIndex))

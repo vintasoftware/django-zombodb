@@ -16,7 +16,7 @@ class PostgresIndex(Index):
     def create_sql(self, model, schema_editor, using=''):
         statement = super().create_sql(model, schema_editor, using=' USING %s' % self.suffix)
         with_params = self.get_with_params()
-        if with_params:
+        if with_params:  # pragma: no cover
             statement.parts['extra'] = 'WITH (%s) %s' % (
                 ', '.join(with_params),
                 statement.parts['extra'],
@@ -24,4 +24,4 @@ class PostgresIndex(Index):
         return statement
 
     def get_with_params(self):
-        return []
+        return []  # pragma: no cover
