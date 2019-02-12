@@ -31,6 +31,6 @@ setoptconf==0.2.0         # via prospector
 six==1.12.0               # via astroid, cfgv, pre-commit, pydocstyle
 snowballstemmer==1.2.1    # via pydocstyle
 toml==0.10.0              # via pre-commit
-virtualenv==16.3.0        # via pre-commit
+virtualenv==16.4.0        # via pre-commit
 wrapt==1.11.1             # via astroid
 zipp==0.3.3               # via importlib-metadata

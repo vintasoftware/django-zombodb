@@ -9,7 +9,7 @@ astroid==2.0.4            # via prospector, pylint, pylint-celery, pylint-flask,
 bumpversion==0.5.3
 cfgv==1.4.0               # via pre-commit
 click==7.0                # via pip-tools
-django==2.1.5
+django==2.1.7
 dodgy==0.1.9              # via prospector
 elasticsearch-dsl==6.3.1
 elasticsearch==6.3.1
@@ -47,7 +47,7 @@ toml==0.10.0              # via pre-commit, tox
 tox-battery==0.5.1
 tox==3.7.0
 urllib3==1.24.1           # via elasticsearch
-virtualenv==16.3.0        # via pre-commit, tox
+virtualenv==16.4.0        # via pre-commit, tox
 wheel==0.30.0
 wrapt==1.11.1             # via astroid
 zipp==0.3.3               # via importlib-metadata

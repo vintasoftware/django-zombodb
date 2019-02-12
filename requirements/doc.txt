@@ -9,7 +9,7 @@ babel==2.6.0              # via sphinx
 bleach==3.1.0             # via readme-renderer
 certifi==2018.11.29       # via requests
 chardet==3.0.4            # via doc8, requests
-django==2.1.5
+django==2.1.7
 doc8==0.8.0
 docutils==0.14            # via doc8, readme-renderer, restructuredtext-lint, sphinx
 elasticsearch-dsl==6.3.1
