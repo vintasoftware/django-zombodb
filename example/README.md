@@ -45,4 +45,4 @@ To run this example, follow these instructions:
 
 ### Notes:
 - `django_zombodb` Postgres user needs to be a `SUPERUSER` for activating the `zombodb` extension on the newly created database. This is handled by the operation `django_zombodb.operations.ZomboDBExtension()` on the `0002` migration. If you wish you can `ALTER ROLE django_zombodb NOSUPERUSER` after running the migrations.
-- `ZOMBODB_ELASTICSEARCH_URL` on settings.py defines your Elasticsearch URL. Change it if necessary.
+- `ZOMBODB_ELASTICSEARCH_URL` on settings.py defines your Elasticsearch URL. It's set to `http://localhost:9200/`. Change it if necessary.
