@@ -40,7 +40,7 @@ To run this example, follow these instructions:
 
 9. Access from the admin and run searches at `http://127.0.0.1:8000/admin/restaurants/restaurant/`:
 
-![Django admin screenshot](https://user-images.githubusercontent.com/397989/52665839-63ea4300-2eeb-11e9-9039-7d05bff0ac3a.png)
+    ![Django admin screenshot](https://user-images.githubusercontent.com/397989/52665839-63ea4300-2eeb-11e9-9039-7d05bff0ac3a.png)
 
 
 ### Notes:
