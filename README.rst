@@ -33,11 +33,13 @@ Quickstart
 
 1. Install ZomboDB (instructions `here <https://github.com/zombodb/zombodb/blob/master/INSTALL.md>`_)
 
+2. Install django-zombodb:
+
 ::
 
     pip install django-zombodb
 
-2. Add the `SearchQuerySet` and the `ZomboDBIndex` to your model:
+3. Add the `SearchQuerySet` and the `ZomboDBIndex` to your model:
 
 .. code-block:: python
 
@@ -53,13 +55,13 @@ Quickstart
                 ]),
             ]
 
-3. Make the migrations:
+4. Make the migrations:
 
 ::
 
     python manage.py makemigrations
 
-4. Add `django_zombodb.operations.ZomboDBExtension()` as the first operation of the migration you've just created:
+5. Add `django_zombodb.operations.ZomboDBExtension()` as the first operation of the migration you've just created:
 
 .. code-block:: python
 
@@ -72,17 +74,17 @@ Quickstart
         ]
 
         operations = [
-            django_zombodb.operations.ZomboDBExtension(),
-            ...
+            django_zombodb.operations.ZomboDBExtension(),  # <<< here
+            migrations.AddIndex...
         ]
 
-5. Run the migrations (Postgres user must be SUPERUSER to create the ZomboDB extension):
+6. Run the migrations (Postgres user must be SUPERUSER to create the ZomboDB extension):
 
 ::
 
     python manage.py migrate
 
-6. Done! Now you can make Elasticsearch queries directly from your model:
+7. Done! Now you can make Elasticsearch queries directly from your model:
 
 .. code-block:: python
 
