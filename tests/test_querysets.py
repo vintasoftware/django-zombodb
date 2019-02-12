@@ -1,11 +1,13 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, override_settings
 
-from elasticsearch_dsl import Q as ElasticsearchQ, Search
+from elasticsearch_dsl import Q as ElasticsearchQ
+from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Term
 
 from django_zombodb.exceptions import InvalidElasticsearchQuery
-from tests.restaurants.models import Restaurant, RestaurantNoIndex
+
+from .restaurants.models import Restaurant, RestaurantNoIndex
 
 
 @override_settings(ZOMBODB_ELASTICSEARCH_URL='http://localhost:9200/')

@@ -19,6 +19,7 @@ pep8:
     - D205
     - D400
     - N811  # constant imported as non constant, breaks for Django's `Q`
+    - N802  # function name should be lowercase, breaks for some Django test methods
   options:
     max-line-length: 100
 

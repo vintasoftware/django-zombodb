@@ -95,7 +95,7 @@ class ZomboDBIndex(PostgresIndex):
         # since Index.max_name_length is 30
         return self.name + '_row_type'
 
-    def create_sql(self, model, schema_editor, using=''):
+    def create_sql(self, model, schema_editor, using=''):  # pylint: disable=unused-argument
         statement = super().create_sql(model, schema_editor)
         row_type = schema_editor.quote_name(self._get_row_type_name())
         return ZomboDBIndexStatementAdapter(
