@@ -57,7 +57,11 @@ setup(
         'django_zombodb',
     ],
     include_package_data=True,
-    install_requires=[],
+    install_requires=[
+        'elasticsearch-dsl>=6.3.1',
+        'elasticsearch>=6.3.1',
+        'psycopg2>=2.7.7',
+    ],
     zip_safe=False,
     keywords='django-zombodb',
     classifiers=[

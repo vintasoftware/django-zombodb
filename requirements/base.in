@@ -1,7 +1,6 @@
 # Core requirements for using this application
 
 Django
-elasticsearch-dsl==6.3.1
-elasticsearch==6.3.1
-psycopg2==2.7.7
-python-decouple==3.1
+elasticsearch-dsl
+elasticsearch
+psycopg2

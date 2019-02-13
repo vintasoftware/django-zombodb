@@ -5,3 +5,4 @@ pip-tools                 # Requirements file management
 tox                       # virtualenv management for tests
 tox-battery               # Makes tox aware of requirements file changes
 wheel==0.30.0             # For generation of wheels for PyPI
+python-decouple           # For settings.py

@@ -24,14 +24,13 @@ psycopg2==2.7.7
 pygments==2.3.1           # via readme-renderer, sphinx
 pyparsing==2.3.1          # via packaging
 python-dateutil==2.8.0    # via elasticsearch-dsl
-python-decouple==3.1
 pytz==2018.9              # via babel, django
 readme-renderer==24.0
 requests==2.21.0          # via sphinx
 restructuredtext-lint==1.2.2  # via doc8
 six==1.12.0               # via bleach, doc8, elasticsearch-dsl, packaging, python-dateutil, readme-renderer, sphinx, stevedore
 snowballstemmer==1.2.1    # via sphinx
-sphinx-rtd-theme==0.4.2
+sphinx-rtd-theme==0.4.3
 sphinx==1.8.4
 sphinxcontrib-websupport==1.1.0  # via sphinx
 stevedore==1.30.0         # via doc8
