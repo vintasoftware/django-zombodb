@@ -39,7 +39,7 @@ Quickstart
 
     pip install django-zombodb
 
-3. Add the `SearchQuerySet` and the `ZomboDBIndex` to your model:
+3. Add the ``SearchQuerySet`` and the ``ZomboDBIndex`` to your model:
 
 .. code-block:: python
 
@@ -64,7 +64,7 @@ Quickstart
 
     python manage.py makemigrations
 
-5. Add `django_zombodb.operations.ZomboDBExtension()` as the first operation of the migration you've just created:
+5. Add ``django_zombodb.operations.ZomboDBExtension()`` as the first operation of the migration you've just created:
 
 .. code-block:: python
 
