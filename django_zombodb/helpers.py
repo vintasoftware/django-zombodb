@@ -31,6 +31,12 @@ def _validate_query(index, post_data):
             'post_data': post_data
         })
         validation_result = json.loads(cursor.fetchone()[0])
+        if 'error' in validation_result:
+            raise ImproperlyConfigured(
+                "Unexpected Elasticsearch error. "
+                "You may need to recreate your index={index}. "
+                "Details:\n"
+                "{error}".format(index=index, error=validation_result))
         return validation_result['valid']
 
 
