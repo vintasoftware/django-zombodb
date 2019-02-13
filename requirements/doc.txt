@@ -7,32 +7,44 @@
 alabaster==0.7.12         # via sphinx
 babel==2.6.0              # via sphinx
 bleach==3.1.0             # via readme-renderer
+bumpversion==0.5.3
 certifi==2018.11.29       # via requests
 chardet==3.0.4            # via doc8, requests
+click==7.0                # via pip-tools
 django==2.1.7
 doc8==0.8.0
 docutils==0.14            # via doc8, readme-renderer, restructuredtext-lint, sphinx
 elasticsearch-dsl==6.3.1
 elasticsearch==6.3.1
+filelock==3.0.10          # via tox
 idna==2.8                 # via requests
 imagesize==1.1.0          # via sphinx
 jinja2==2.10              # via sphinx
 markupsafe==1.1.0         # via jinja2
 packaging==19.0           # via sphinx
 pbr==5.1.2                # via stevedore
+pip-tools==3.3.2
+pluggy==0.8.1             # via tox
 psycopg2==2.7.7
+py==1.7.0                 # via tox
 pygments==2.3.1           # via readme-renderer, sphinx
 pyparsing==2.3.1          # via packaging
 python-dateutil==2.8.0    # via elasticsearch-dsl
+python-decouple==3.1
 pytz==2018.9              # via babel, django
 readme-renderer==24.0
 requests==2.21.0          # via sphinx
 restructuredtext-lint==1.2.2  # via doc8
-six==1.12.0               # via bleach, doc8, elasticsearch-dsl, packaging, python-dateutil, readme-renderer, sphinx, stevedore
+six==1.12.0               # via bleach, doc8, elasticsearch-dsl, packaging, pip-tools, python-dateutil, readme-renderer, sphinx, stevedore, tox
 snowballstemmer==1.2.1    # via sphinx
 sphinx-rtd-theme==0.4.3
 sphinx==1.8.4
 sphinxcontrib-websupport==1.1.0  # via sphinx
 stevedore==1.30.0         # via doc8
+toml==0.10.0              # via tox
+tox-battery==0.5.1
+tox==3.7.0
 urllib3==1.24.1           # via elasticsearch, requests
+virtualenv==16.4.0        # via tox
 webencodings==0.5.1       # via bleach
+wheel==0.30.0
