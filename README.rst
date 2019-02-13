@@ -43,6 +43,9 @@ Quickstart
 
 .. code-block:: python
 
+    from django_zombodb.indexes import ZomboDBIndex
+    from django_zombodb.querysets import SearchQuerySet
+
     class Restaurant(models.Model):
         name = models.TextField()
 
@@ -75,7 +78,6 @@ Quickstart
 
         operations = [
             django_zombodb.operations.ZomboDBExtension(),  # <<< here
-            migrations.AddIndex...
         ]
 
 6. Run the migrations (Postgres user must be SUPERUSER to create the ZomboDB extension):
