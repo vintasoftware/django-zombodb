@@ -69,7 +69,7 @@ upgrade: ## update the requirements/*.txt files with the latest packages satisfy
 	sed '/django==/d' requirements/test.txt > requirements/test.tmp
 	mv requirements/test.tmp requirements/test.txt
 
-requirements: ## install development environment requirements
+install_requirements: ## install development environment requirements
 	pip install -qr requirements/dev.txt -qr requirements/test.txt -qr requirements/quality.txt --exists-action w
 	pip-sync requirements/dev.txt requirements/doc.txt requirements/quality.txt requirements/test.txt
 
