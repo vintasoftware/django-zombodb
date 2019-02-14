@@ -1,3 +1,4 @@
+import django
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connection
 from django.test import TestCase, override_settings
@@ -7,7 +8,7 @@ from django_zombodb.indexes import ZomboDBIndex
 from .models import DateTimeArrayModel, IntegerArrayModel
 
 
-class ZomboDBIndexStatementAdapterTests(TestCase):
+class ZomboDBIndexCreateStatementAdapterTests(TestCase):
 
     def setUp(self):
         self.index_name = 'my_test_index'
@@ -71,7 +72,7 @@ class ZomboDBIndexStatementAdapterTests(TestCase):
     def test_repr(self):
         self.assertEqual(
             self.repr,
-            '<ZomboDBIndexStatementAdapter \'CREATE TYPE "my_test_index_row_type" AS '
+            '<ZomboDBIndexCreateStatementAdapter \'CREATE TYPE "my_test_index_row_type" AS '
             '(datetimes timestamp with time zone[], dates date[], times time[]); '
             'CREATE INDEX "my_test_index" ON "tests_datetimearraymodel" '
             'USING zombodb ((ROW("datetimes", "dates", "times")::"my_test_index_row_type")) '
@@ -93,7 +94,7 @@ class ZomboDBIndexStatementAdapterTests(TestCase):
         )
 
 
-class ZomboDBIndexRemoveSQLTests(TestCase):
+class ZomboDBIndexRemoveStatementAdapter(TestCase):
 
     def setUp(self):
         self.index_name = 'my_other_test_index'
@@ -103,13 +104,59 @@ class ZomboDBIndexRemoveSQLTests(TestCase):
             url='http://localhost:7777/'
         )
         with connection.schema_editor() as editor:
-            self.remove_sql_str = self.index.remove_sql(
+            self.statement_adapter_or_str = self.index.remove_sql(
                 model=DateTimeArrayModel,
                 schema_editor=editor)
+            self.str = str(self.statement_adapter_or_str)
+            self.repr = repr(self.statement_adapter_or_str)
 
-    def test_remove_sql_str(self):
+    def test_references_table(self):
+        if django.VERSION >= (2, 2, 0):
+            self.assertIs(
+                self.statement_adapter_or_str.references_table(
+                    DateTimeArrayModel._meta.db_table), True)
+            self.assertIs(
+                self.statement_adapter_or_str.references_table(
+                    IntegerArrayModel._meta.db_table), False)
+
+    def test_references_column(self):
+        if django.VERSION >= (2, 2, 0):
+            self.assertIs(
+                self.statement_adapter_or_str.references_column(  # does nothing
+                    DateTimeArrayModel._meta.db_table,
+                    'dates'
+                ), False)
+            self.assertNotIn('columns', self.statement_adapter_or_str.parts)
+
+    def test_rename_table_references(self):
+        if django.VERSION >= (2, 2, 0):
+            self.statement_adapter_or_str.rename_table_references(
+                DateTimeArrayModel._meta.db_table,
+                'other')
+            self.assertEqual(
+                repr(self.statement_adapter_or_str.parts['table']),
+                '<Table \'"other"\'>')
+
+    def test_rename_column_references(self):
+        if django.VERSION >= (2, 2, 0):
+            self.statement_adapter_or_str.rename_column_references(  # does nothing
+                DateTimeArrayModel._meta.db_table,
+                'dates',
+                'other')
+            self.assertNotIn('columns', self.statement_adapter_or_str.parts)
+
+    def test_repr(self):
+        if django.VERSION >= (2, 2, 0):
+            self.assertEqual(
+                self.repr,
+                '<ZomboDBIndexRemoveStatementAdapter '
+                '\'DROP INDEX IF EXISTS "my_other_test_index"; '
+                'DROP TYPE IF EXISTS "my_other_test_index_row_type";\'>'
+            )
+
+    def test_str(self):
         self.assertEqual(
-            self.remove_sql_str,
+            self.str,
             'DROP INDEX IF EXISTS "my_other_test_index"; '
             'DROP TYPE IF EXISTS "my_other_test_index_row_type";')
 

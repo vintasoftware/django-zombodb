@@ -1,14 +1,16 @@
+import django
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+
+
 try:
     from django.contrib.postgres.indexes import PostgresIndex
 except ImportError:
     # Django < 2.1
     from django_zombodb.base_indexes import PostgresIndex
 
-from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 
-
-class ZomboDBIndexStatementAdapter:
+class ZomboDBIndexCreateStatementAdapter:
     template = "CREATE INDEX %(name)s ON %(table)s USING zombodb ((ROW(%(columns)s)::%(row_type)s)) %(extra)s"  # noqa: E501
 
     def __init__(self, statement, model, schema_editor, fields, row_type):
@@ -51,6 +53,36 @@ class ZomboDBIndexStatementAdapter:
         s = self.template % parts
 
         s = self._get_create_type() + s
+        return s
+
+
+class ZomboDBIndexRemoveStatementAdapter:
+
+    def __init__(self, statement, row_type):
+        self.statement = statement
+        self.template = self.statement.template
+        self.parts = self.statement.parts
+
+        self.row_type = row_type
+
+    def references_table(self, *args, **kwargs):
+        return self.statement.references_table(*args, **kwargs)
+
+    def references_column(self, *args, **kwargs):
+        return self.statement.references_column(*args, **kwargs)
+
+    def rename_table_references(self, *args, **kwargs):
+        return self.statement.rename_table_references(*args, **kwargs)
+
+    def rename_column_references(self, *args, **kwargs):
+        return self.statement.rename_column_references(*args, **kwargs)
+
+    def __repr__(self):
+        return '<%s %r>' % (self.__class__.__name__, str(self))
+
+    def __str__(self):
+        s = str(self.statement)
+        s += ('; DROP TYPE IF EXISTS %s;' % self.row_type)
         return s
 
 
@@ -98,13 +130,16 @@ class ZomboDBIndex(PostgresIndex):
     def create_sql(self, model, schema_editor, using=''):  # pylint: disable=unused-argument
         statement = super().create_sql(model, schema_editor)
         row_type = schema_editor.quote_name(self._get_row_type_name())
-        return ZomboDBIndexStatementAdapter(
+        return ZomboDBIndexCreateStatementAdapter(
             statement, model, schema_editor, self.fields, row_type)
 
     def remove_sql(self, model, schema_editor):
-        sql = super().remove_sql(model, schema_editor)
+        statement = super().remove_sql(model, schema_editor)
         row_type = schema_editor.quote_name(self._get_row_type_name())
-        return sql + ('; DROP TYPE IF EXISTS %s;' % row_type)
+        if django.VERSION >= (2, 2, 0):
+            return ZomboDBIndexRemoveStatementAdapter(statement, row_type)
+        else:
+            return statement + ('; DROP TYPE IF EXISTS %s;' % row_type)
 
     def _get_params(self):
         return [
