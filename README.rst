@@ -107,7 +107,7 @@ Check `<https://github.com/vintasoftware/django-zombodb/tree/master/example>`_
 Running Tests
 -------------
 
-You need to have Elasticsearch and Postgres instances running on default ports. Then just do:
+You need to have Elasticsearch and Postgres instances running on default ports. Also, you need ZomboDB installed. Then just do:
 
 ::
 
