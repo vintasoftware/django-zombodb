@@ -62,3 +62,5 @@ TEMPLATES = [{
 }]
 
 STATIC_URL = '/static/'
+
+TEST_RUNNER = 'tests.runner.DropSchemaDiscoverRunner'
