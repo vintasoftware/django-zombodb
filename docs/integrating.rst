@@ -68,7 +68,16 @@ To integrate it with Elasticsearch, we need to add a :py:class:`~django_zombodb.
                 ]),
             ]
 
-Now that model will support Elasticsearch queries for both ``name`` and ``street`` fields. But to perform those searches, we need it to use the custom queryset :py:class:`~django_zombodb.querysets.SearchQuerySet`:
+After that, create and run the migrations: ::
+
+    python manage.py makemigrations
+    python manage.py migrate
+
+.. warning::
+
+    During the migration, :py:class:`~django_zombodb.indexes.ZomboDBIndex` reads the value at ``settings.ZOMBODB_ELASTICSEARCH_URL``. That means if ``settings.ZOMBODB_ELASTICSEARCH_URL`` changes after the :py:class:`~django_zombodb.indexes.ZomboDBIndex` migration, **the internal index stored at Postgres will still point to the old URL**. If you wish to change the URL of an existing :py:class:`~django_zombodb.indexes.ZomboDBIndex`, change both ``settings.ZOMBODB_ELASTICSEARCH_URL`` and issue a ``ALTER INDEX index_name SET (url='http://some.new.url');`` (preferably inside a ``migrations.RunSQL`` in a new migration).
+
+Now the ``Restaurant`` model will support Elasticsearch queries for both ``name`` and ``street`` fields. But to perform those searches, we need it to use the custom queryset :py:class:`~django_zombodb.querysets.SearchQuerySet`:
 
 .. code-block:: python
 
