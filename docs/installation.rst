@@ -22,7 +22,7 @@ Install django-zombodb: ::
 Settings
 --------
 
-Set ``ZOMBODB_ELASTICSEARCH_URL`` on your settings.py. That will be the default URL set on your ZomboDB indexes.
+Set ``ZOMBODB_ELASTICSEARCH_URL`` on your settings.py. That is the URL of the ElasticSearch cluster used by ZomboDB.
 
 .. code-block:: python
 

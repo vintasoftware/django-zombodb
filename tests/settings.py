@@ -1,10 +1,10 @@
 # -*- coding: utf-8
 from __future__ import absolute_import, unicode_literals
 
-import django
-
 from decouple import config
 
+
+ZOMBODB_ELASTICSEARCH_URL = 'http://localhost:9200/'
 
 DEBUG = False
 USE_TZ = True

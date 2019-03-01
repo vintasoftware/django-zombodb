@@ -44,6 +44,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name='restaurant',
-            index=django_zombodb.indexes.ZomboDBIndex(fields=['name', 'street', 'zip_code', 'city', 'state', 'phone', 'email', 'website', 'categories'], name='restaurants_name_f38813_zombodb', url='http://localhost:9200/'),
+            index=django_zombodb.indexes.ZomboDBIndex(fields=['name', 'street', 'zip_code', 'city', 'state', 'phone', 'email', 'website', 'categories'], name='restaurants_name_f38813_zombodb'),
         ),
     ]

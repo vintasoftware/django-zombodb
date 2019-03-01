@@ -59,3 +59,6 @@ requirement/private.txt
 # Virtualenvs
 venv/
 env/
+
+# Pyenv
+.python-version

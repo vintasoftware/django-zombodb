@@ -91,7 +91,6 @@ class ZomboDBIndex(PostgresIndex):
 
     def __init__(
             self, *,
-            url=None,
             shards=None,
             replicas=None,
             alias=None,
@@ -102,13 +101,16 @@ class ZomboDBIndex(PostgresIndex):
             compression_level=None,
             llapi=None,
             **kwargs):
-        if url is None:
-            try:
-                url = settings.ZOMBODB_ELASTICSEARCH_URL
-            except AttributeError:
-                raise ImproperlyConfigured(
-                    "Please set ZOMBODB_ELASTICSEARCH_URL on settings or "
-                    "pass a `url` argument for this index")
+        url = kwargs.pop('url', None)
+        if url:
+            raise ImproperlyConfigured(
+                "The `url` param is not supported anymore. "
+                "Instead, please remove it and set ZOMBODB_ELASTICSEARCH_URL on settings.")
+
+        try:
+            url = settings.ZOMBODB_ELASTICSEARCH_URL
+        except AttributeError:
+            raise ImproperlyConfigured("Please set ZOMBODB_ELASTICSEARCH_URL on settings.")
 
         self.url = url
         self.shards = shards
@@ -166,7 +168,9 @@ class ZomboDBIndex(PostgresIndex):
 
     def deconstruct(self):
         path, args, kwargs = super().deconstruct()
-        for param, value, __ in self._get_params():
+        params = self._get_params()
+        params = params[1:]  # don't add URL to migrations
+        for param, value, __ in params:
             if value is not None:
                 kwargs[param] = value
         return path, args, kwargs

@@ -1,4 +1,5 @@
 import django
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connection
 from django.test import TestCase, override_settings
@@ -8,6 +9,7 @@ from django_zombodb.indexes import ZomboDBIndex
 from .models import DateTimeArrayModel, IntegerArrayModel
 
 
+@override_settings(ZOMBODB_ELASTICSEARCH_URL='http://localhost:9999/')
 class ZomboDBIndexCreateStatementAdapterTests(TestCase):
 
     def setUp(self):
@@ -15,7 +17,6 @@ class ZomboDBIndexCreateStatementAdapterTests(TestCase):
         self.index = ZomboDBIndex(
             fields=['datetimes', 'dates', 'times'],
             name=self.index_name,
-            url='http://localhost:9999/',
             shards=4,
             replicas=1,
             alias='my-test-index-alias',
@@ -94,6 +95,7 @@ class ZomboDBIndexCreateStatementAdapterTests(TestCase):
         )
 
 
+@override_settings(ZOMBODB_ELASTICSEARCH_URL='http://localhost:9999')
 class ZomboDBIndexRemoveStatementAdapter(TestCase):
 
     def setUp(self):
@@ -101,7 +103,6 @@ class ZomboDBIndexRemoveStatementAdapter(TestCase):
         self.index = ZomboDBIndex(
             fields=['dates', 'times'],
             name=self.index_name,
-            url='http://localhost:7777/'
         )
         with connection.schema_editor() as editor:
             self.statement_adapter_or_str = self.index.remove_sql(
@@ -175,11 +176,6 @@ class ZomboDBIndexTests(TestCase):
         self.assertEqual(index, same_index)
         self.assertNotEqual(index, another_index)
 
-    def test_not_eq(self):
-        index_with_default_url = ZomboDBIndex(fields=['title'])
-        index_with_other_url = ZomboDBIndex(fields=['title'], url='http://localhost/')
-        self.assertNotEqual(index_with_default_url, index_with_other_url)
-
     def test_name_auto_generation(self):
         index = ZomboDBIndex(fields=['datetimes', 'dates', 'times'])
         index.set_name_with_model(DateTimeArrayModel)
@@ -189,7 +185,6 @@ class ZomboDBIndexTests(TestCase):
         index = ZomboDBIndex(
             fields=['title'],
             name='test_title_zombodb',
-            url='http://localhost/',
             shards=2,
             replicas=2,
             alias='test-alias',
@@ -208,7 +203,6 @@ class ZomboDBIndexTests(TestCase):
             {
                 'fields': ['title'],
                 'name': 'test_title_zombodb',
-                'url': 'http://localhost/',
                 'shards': 2,
                 'replicas': 2,
                 'alias': 'test-alias',
@@ -221,7 +215,6 @@ class ZomboDBIndexTests(TestCase):
             }
         )
 
-    @override_settings(ZOMBODB_ELASTICSEARCH_URL='http://localhost:0')
     def test_deconstruct_no_args(self):
         index = ZomboDBIndex(fields=['title'], name='test_title_zombodb')
         path, args, kwargs = index.deconstruct()
@@ -231,21 +224,32 @@ class ZomboDBIndexTests(TestCase):
             kwargs,
             {
                 'fields': ['title'],
-                'name': 'test_title_zombodb',
-                'url': 'http://localhost:0'
+                'name': 'test_title_zombodb'
             }
         )
 
 
-class ZomboDBIndexNoURLTests(TestCase):
+class ZomboDBIndexURLTests(TestCase):
 
+    @override_settings()
     def test_exception_no_url(self):
+        del settings.ZOMBODB_ELASTICSEARCH_URL
+
         with self.assertRaises(ImproperlyConfigured) as cm:
             ZomboDBIndex(fields=['title'], name='test_title_zombodb')
+
         self.assertEqual(
             str(cm.exception),
-            "Please set ZOMBODB_ELASTICSEARCH_URL on settings or "
-            "pass a `url` argument for this index")
+            "Please set ZOMBODB_ELASTICSEARCH_URL on settings.")
+
+    def test_exception_old_url_param(self):
+        with self.assertRaises(ImproperlyConfigured) as cm:
+            ZomboDBIndex(url='http://localhost:9200/', fields=['title'], name='test_title_zombodb')
+
+        self.assertEqual(
+            str(cm.exception),
+            "The `url` param is not supported anymore. "
+            "Instead, please remove it and set ZOMBODB_ELASTICSEARCH_URL on settings.")
 
 
 # Based on django/tests/postgres_tests/test_indexes.py
@@ -283,7 +287,6 @@ class ZomboDBIndexSchemaTests(TestCase):
         index = ZomboDBIndex(
             fields=['field'],
             name=index_name,
-            url='http://localhost:9200/',
             shards=2,
             replicas=2,
             alias='test-alias',

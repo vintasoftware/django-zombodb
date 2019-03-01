@@ -27,7 +27,6 @@ class Restaurant(models.Model):
         indexes = [
             Index(name='other-index', fields=['url']),
             ZomboDBIndex(
-                url='http://localhost:9200/',
                 fields=[
                     'name',
                     'street',
