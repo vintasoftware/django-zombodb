@@ -18,6 +18,9 @@ django-zombodb
     :target: https://codecov.io/gh/vintasoftware/django-zombodb
     :alt: Coverage Status
 
+.. image:: https://img.shields.io/github/license/vintasoftware/django-zombodb.svg
+    :alt: GitHub
+
 Easy Django integration with Elasticsearch through `ZomboDB <https://github.com/zombodb/zombodb>`_ Postgres Extension.
 Thanks to ZomboDB, **your Django models are synced with Elasticsearch after every transaction**! Searching is also very simple: you can make
 Elasticsearch queries by just calling one of the search methods on your querysets. Couldn't be easier!
@@ -112,3 +115,7 @@ You need to have Elasticsearch and Postgres instances running on default ports. 
 ::
 
     python runtests.py
+
+Commercial Support
+------------------
+This project is maintained by `Vinta Software <https://www.vinta.com.br/?django-zombodb=1>`_ and other contributors. We are always looking for exciting work, so if you need any commercial support, feel free to get in touch: contact@vinta.com.br
