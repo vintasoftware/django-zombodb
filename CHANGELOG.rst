@@ -3,6 +3,13 @@
 Change Log
 ----------
 
+0.2.1 (2019-03-01)
+++++++++++++++++++
+
+* Dropped support for Python 3.4.
+* Added missing imports to docs.
+
+
 0.2.0 (2019-03-01)
 ++++++++++++++++++
 
