@@ -2,6 +2,5 @@
 
 isort                     # imports sorter for python
 pre-commit                # pre-commit hooks for git
-prospector                # linter wrapper for python
-pylint                    # linter for python
+prospector==1.1.6.2       # linter wrapper for python
 pyyaml>=4.2b1             # force safer pyyaml version
