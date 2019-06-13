@@ -52,7 +52,7 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	$(BROWSER) docs/_build/html/index.html
 
 upgrade: ## update the requirements/*.txt files with the latest packages satisfying requirements/*.in
-	pip install -q pip-tools
+	pip install -U -q pip-tools
 	pip-compile --upgrade -o requirements/dev.txt requirements/base.in requirements/dev.in requirements/quality.in
 	pip-compile --upgrade -o requirements.txt requirements/base.in requirements/prod.in
 	# Remove Django from requirements.txt
