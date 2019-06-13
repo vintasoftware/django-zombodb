@@ -56,6 +56,8 @@ To integrate it with Elasticsearch, we need to add a :py:class:`~django_zombodb.
 
 .. code-block:: python
 
+    from django_zombodb.indexes import ZomboDBIndex
+
     class Restaurant(models.Model):
         name = models.TextField()
         street = models.TextField()
@@ -80,6 +82,9 @@ After that, create and run the migrations: ::
 Now the ``Restaurant`` model will support Elasticsearch queries for both ``name`` and ``street`` fields. But to perform those searches, we need it to use the custom queryset :py:class:`~django_zombodb.querysets.SearchQuerySet`:
 
 .. code-block:: python
+
+    from django_zombodb.querysets import SearchQuerySet
+    from django_zombodb.indexes import ZomboDBIndex
 
     class Restaurant(models.Model):
         name = models.TextField()
