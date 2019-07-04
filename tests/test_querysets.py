@@ -246,3 +246,37 @@ class SearchQuerySetTests(TransactionTestCase):
             str(cm.exception),
             "Can't find a ZomboDBIndex at model {model}. "
             "Did you forget it? ".format(model=RestaurantNoIndex))
+
+    def test_search_no_limit(self):
+        # duplicate tj and soleil
+        self.tj.pk = None
+        self.tj.save()
+        self.soleil.pk = None
+        self.soleil.save()
+
+        results = Restaurant.objects.query_string_search(
+            'skillman',
+            sort=True,
+            score_attr='custom_score',
+            limit=None)
+
+        self.assertEqual(len(results), 4)
+        self.assertEqual(
+            [r.name for r in results],
+            [self.soleil.name, self.soleil.name, self.tj.name, self.tj.name])
+
+    def test_search_limit(self):
+        # duplicate tj and soleil
+        self.tj.pk = None
+        self.tj.save()
+        self.soleil.pk = None
+        self.soleil.save()
+
+        results = Restaurant.objects.query_string_search(
+            'skillman',
+            sort=True,
+            score_attr='custom_score',
+            limit=2)
+
+        self.assertEqual(len(results), 2)
+        self.assertEqual([r.name for r in results], [self.soleil.name] * 2)
