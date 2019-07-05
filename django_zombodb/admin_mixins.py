@@ -8,6 +8,7 @@ from django_zombodb.helpers import validate_query_string
 
 
 class ZomboDBAdminMixin:
+    MAX_RESULTS = None
 
     def get_search_fields(self, request):
         """
@@ -39,7 +40,11 @@ class ZomboDBAdminMixin:
         if search_term:
             if request._has_valid_search:
                 queryset = queryset.query_string_search(
-                    search_term, validate=False, sort=False, score_attr='zombodb_score'
+                    search_term,
+                    validate=False,
+                    sort=False,
+                    score_attr='zombodb_score',
+                    limit=self.MAX_RESULTS
                 ).annotate_score()
             else:
                 self.message_user(
