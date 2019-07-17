@@ -32,7 +32,14 @@ class Restaurant(models.Model):
                 'state',
                 'phone',
                 'categories',
-            ]),
+            ],
+            field_mapping={
+                'name': {"type": "text", "copy_to": "zdb_all",
+                         "analyzer": "fulltext_with_shingles",
+                         "search_analyzer": "fulltext_with_shingles_search"},
+                'street': {"type": "text", "copy_to": "zdb_all", "analyzer":
+                           "zdb_standard"},
+            })
         ]
 
     def __str__(self):
