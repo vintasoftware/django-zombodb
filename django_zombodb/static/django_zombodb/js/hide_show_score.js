@@ -9,4 +9,4 @@
             $('td.field-_zombodb_score').remove();
         }
     });
-})(django.jQuery);
+})(django.jQuery || jQuery);
