@@ -20,9 +20,10 @@ class ZomboDBIndexCreateStatementAdapterTests(TestCase):
         self.index = ZomboDBIndex(
             fields=['datetimes', 'dates', 'times'],
             field_mapping=OrderedDict([  # use OrderedDict to stabilize tests on Python < 3.6
-                ('datetimes', {'type': 'date', 'format': 'HH:mm:ss.SSSSSS', 'copy_to': 'zdb_all'}),
-                ('dates', {'type': 'date', 'copy_to': 'zdb_all'}),
-                ('times', {'type': 'date', 'copy_to': 'zdb_all'}),
+                ('datetimes', OrderedDict(
+                    [('type', 'date'), ('format', 'HH:mm:ss.SSSSSS'), ('copy_to', 'zdb_all')])),
+                ('dates', OrderedDict([('type', 'date'), ('copy_to', 'zdb_all')])),
+                ('times', OrderedDict([('type', 'date'), ('copy_to', 'zdb_all')])),
             ]),
             name=self.index_name,
             shards=4,
@@ -204,7 +205,7 @@ class ZomboDBIndexTests(TestCase):
     def test_deconstruction(self):
         index = ZomboDBIndex(
             fields=['title'],
-            field_mapping={'title': {'type': 'text'}},
+            field_mapping=OrderedDict([('title', {'type': 'text'})]),
             name='test_title_zombodb',
             shards=2,
             replicas=2,
@@ -223,7 +224,7 @@ class ZomboDBIndexTests(TestCase):
             kwargs,
             {
                 'fields': ['title'],
-                'field_mapping': {'title': {'type': 'text'}},
+                'field_mapping': OrderedDict([('title', {'type': 'text'})]),
                 'name': 'test_title_zombodb',
                 'shards': 2,
                 'replicas': 2,
@@ -308,7 +309,7 @@ class ZomboDBIndexSchemaTests(TestCase):
         index_name = 'integer_array_zombodb_params'
         index = ZomboDBIndex(
             fields=['field'],
-            field_mapping={'title': {'type': 'text'}},
+            field_mapping=OrderedDict([('title', {'type': 'text'})]),
             name=index_name,
             shards=2,
             replicas=2,
