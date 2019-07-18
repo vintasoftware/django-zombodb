@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import django
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -11,11 +13,18 @@ from .models import DateTimeArrayModel, IntegerArrayModel
 
 @override_settings(ZOMBODB_ELASTICSEARCH_URL='http://localhost:9999/')
 class ZomboDBIndexCreateStatementAdapterTests(TestCase):
+    maxDiff = 10000
 
     def setUp(self):
         self.index_name = 'my_test_index'
         self.index = ZomboDBIndex(
             fields=['datetimes', 'dates', 'times'],
+            field_mapping=OrderedDict([  # use OrderedDict to stabilize tests on Python < 3.6
+                ('datetimes', OrderedDict(
+                    [('type', 'date'), ('format', 'HH:mm:ss.SSSSSS'), ('copy_to', 'zdb_all')])),
+                ('dates', OrderedDict([('type', 'date'), ('copy_to', 'zdb_all')])),
+                ('times', OrderedDict([('type', 'date'), ('copy_to', 'zdb_all')])),
+            ]),
             name=self.index_name,
             shards=4,
             replicas=1,
@@ -75,6 +84,12 @@ class ZomboDBIndexCreateStatementAdapterTests(TestCase):
             self.repr,
             '<ZomboDBIndexCreateStatementAdapter \'CREATE TYPE "my_test_index_row_type" AS '
             '(datetimes timestamp with time zone[], dates date[], times time[]); '
+            'SELECT zdb.define_field_mapping(\\\'"tests_datetimearraymodel"\\\', \\\'datetimes\\\', '  # noqa: E501
+            '\\\'{"type":"date","format":"HH:mm:ss.SSSSSS","copy_to":"zdb_all"}\\\');'
+            'SELECT zdb.define_field_mapping(\\\'"tests_datetimearraymodel"\\\', \\\'dates\\\', '
+            '\\\'{"type":"date","copy_to":"zdb_all"}\\\');'
+            'SELECT zdb.define_field_mapping(\\\'"tests_datetimearraymodel"\\\', \\\'times\\\', '
+            '\\\'{"type":"date","copy_to":"zdb_all"}\\\');'
             'CREATE INDEX "my_test_index" ON "tests_datetimearraymodel" '
             'USING zombodb ((ROW("datetimes", "dates", "times")::"my_test_index_row_type")) '
             'WITH (url = "http://localhost:9999/", shards = 4, replicas = 1, '
@@ -87,6 +102,12 @@ class ZomboDBIndexCreateStatementAdapterTests(TestCase):
             self.str,
             'CREATE TYPE "my_test_index_row_type" '
             'AS (datetimes timestamp with time zone[], dates date[], times time[]); '
+            'SELECT zdb.define_field_mapping(\'"tests_datetimearraymodel"\', \'datetimes\', '
+            '\'{"type":"date","format":"HH:mm:ss.SSSSSS","copy_to":"zdb_all"}\');'
+            'SELECT zdb.define_field_mapping(\'"tests_datetimearraymodel"\', \'dates\', '
+            '\'{"type":"date","copy_to":"zdb_all"}\');'
+            'SELECT zdb.define_field_mapping(\'"tests_datetimearraymodel"\', \'times\', '
+            '\'{"type":"date","copy_to":"zdb_all"}\');'
             'CREATE INDEX "my_test_index" ON "tests_datetimearraymodel" '
             'USING zombodb ((ROW("datetimes", "dates", "times")::"my_test_index_row_type")) '
             'WITH (url = "http://localhost:9999/", shards = 4, replicas = 1, '
@@ -184,6 +205,7 @@ class ZomboDBIndexTests(TestCase):
     def test_deconstruction(self):
         index = ZomboDBIndex(
             fields=['title'],
+            field_mapping=OrderedDict([('title', {'type': 'text'})]),
             name='test_title_zombodb',
             shards=2,
             replicas=2,
@@ -202,6 +224,7 @@ class ZomboDBIndexTests(TestCase):
             kwargs,
             {
                 'fields': ['title'],
+                'field_mapping': OrderedDict([('title', {'type': 'text'})]),
                 'name': 'test_title_zombodb',
                 'shards': 2,
                 'replicas': 2,
@@ -286,6 +309,7 @@ class ZomboDBIndexSchemaTests(TestCase):
         index_name = 'integer_array_zombodb_params'
         index = ZomboDBIndex(
             fields=['field'],
+            field_mapping=OrderedDict([('title', {'type': 'text'})]),
             name=index_name,
             shards=2,
             replicas=2,

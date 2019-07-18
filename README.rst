@@ -36,6 +36,7 @@ Requirements
 
 * **Python**: 3.5, 3.6, 3.7
 * **Django**: 2.0, 2.1, 2.2
+* **Postgres** and **Elasticsearch**: same as `ZomboDB current requirements <https://github.com/zombodb/zombodb#system-requirements>`_
 
 
 Quickstart

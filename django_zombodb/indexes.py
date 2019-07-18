@@ -2,6 +2,8 @@ import django
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
+from django_zombodb.serializers import ES_JSON_SERIALIZER
+
 
 try:
     from django.contrib.postgres.indexes import PostgresIndex
@@ -13,13 +15,14 @@ except ImportError:
 class ZomboDBIndexCreateStatementAdapter:
     template = "CREATE INDEX %(name)s ON %(table)s USING zombodb ((ROW(%(columns)s)::%(row_type)s)) %(extra)s"  # noqa: E501
 
-    def __init__(self, statement, model, schema_editor, fields, row_type):
+    def __init__(self, statement, model, schema_editor, fields, field_mapping, row_type):
         self.statement = statement
         self.parts = self.statement.parts
 
         self.model = model
         self.schema_editor = schema_editor
         self.fields = fields
+        self.field_mapping = field_mapping
         self.row_type = row_type
 
     def references_table(self, *args, **kwargs):
@@ -33,6 +36,15 @@ class ZomboDBIndexCreateStatementAdapter:
 
     def rename_column_references(self, *args, **kwargs):
         return self.statement.rename_column_references(*args, **kwargs)
+
+    def _get_field_mapping(self):
+        define_field_mapping = 'SELECT zdb.define_field_mapping(\'%s\', \'%s\', \'%s\');'
+        s = ''
+        if self.field_mapping:
+            for field in self.field_mapping:
+                mapping = ES_JSON_SERIALIZER.dumps(self.field_mapping[field])
+                s += define_field_mapping % (self.parts['table'], field, mapping)
+        return s
 
     def _get_create_type(self):
         create_type = 'CREATE TYPE %s AS (' % self.row_type
@@ -50,9 +62,9 @@ class ZomboDBIndexCreateStatementAdapter:
     def __str__(self):
         parts = dict(self.parts)  # copy
         parts['row_type'] = self.row_type
-        s = self.template % parts
+        create_index = self.template % parts
 
-        s = self._get_create_type() + s
+        s = self._get_create_type() + self._get_field_mapping() + create_index
         return s
 
 
@@ -100,6 +112,7 @@ class ZomboDBIndex(PostgresIndex):
             batch_size=None,
             compression_level=None,
             llapi=None,
+            field_mapping=None,
             **kwargs):
         url = kwargs.pop('url', None)
         if url:
@@ -122,6 +135,7 @@ class ZomboDBIndex(PostgresIndex):
         self.batch_size = batch_size
         self.compression_level = compression_level
         self.llapi = llapi
+        self.field_mapping = field_mapping
         super().__init__(**kwargs)
 
     def _get_row_type_name(self):
@@ -133,7 +147,7 @@ class ZomboDBIndex(PostgresIndex):
         statement = super().create_sql(model, schema_editor)
         row_type = schema_editor.quote_name(self._get_row_type_name())
         return ZomboDBIndexCreateStatementAdapter(
-            statement, model, schema_editor, self.fields, row_type)
+            statement, model, schema_editor, self.fields, self.field_mapping, row_type)
 
     def remove_sql(self, model, schema_editor):
         statement = super().remove_sql(model, schema_editor)
@@ -155,6 +169,7 @@ class ZomboDBIndex(PostgresIndex):
             ('batch_size', self.batch_size, int),
             ('compression_level', self.compression_level, int),
             ('llapi', self.llapi, bool),
+            ('field_mapping', self.field_mapping, dict),
         ]
 
     def _format_param_value(self, value, param_type):
@@ -178,6 +193,8 @@ class ZomboDBIndex(PostgresIndex):
     def get_with_params(self):
         with_params = []
         for param, value, param_type in self._get_params():
+            if param == 'field_mapping':
+                continue
             if value is not None:
                 value_formatted = self._format_param_value(value, param_type)
                 with_params.append('%s = %s' % (param, value_formatted))

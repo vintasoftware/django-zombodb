@@ -83,8 +83,8 @@ Now the ``Restaurant`` model will support Elasticsearch queries for both ``name`
 
 .. code-block:: python
 
-    from django_zombodb.querysets import SearchQuerySet
     from django_zombodb.indexes import ZomboDBIndex
+    from django_zombodb.querysets import SearchQuerySet
 
     class Restaurant(models.Model):
         name = models.TextField()
@@ -104,9 +104,55 @@ Now the ``Restaurant`` model will support Elasticsearch queries for both ``name`
 
     If you already have a custom queryset on your model, make it inherit from :py:class:`~django_zombodb.querysets.SearchQuerySetMixin`.
 
-Limitation: type mapping
-------------------------
+Field mapping
+-------------
 
-Currently django-zombodb doesn't have an API for defining `type mappings <https://www.elastic.co/guide/en/elasticsearch/reference/6.6/mapping.html>`_ or custom analyzers on Elasticsearch indexes. The types and analyzers are set according to `ZomboDB's default mappings <https://github.com/zombodb/zombodb/blob/master/TYPE-MAPPING.md#common-data-types>`_. If you wish to alter this, you'll need to manually set different Postgres types on your fields with a `RunSQL migration <https://docs.djangoproject.com/en/dev/ref/migration-operations/#runsql>`_. **The next version of django-zombodb will properly support type mapping**.
+From `Elasticsearch documentation <https://www.elastic.co/guide/en/elasticsearch/reference/6.8/mapping.html>`_:
+
+    "Mapping is the process of defining how a document, and the fields it contains, are stored and indexed. For instance, use mappings to define:
+
+    - which string fields should be treated as full text fields.
+    - which fields contain numbers, dates, or geolocations.
+    - whether the values of all fields in the document should be indexed into the catch-all _all field.
+    - the format of date values.
+    - custom rules to control the mapping for dynamically added fields."
+
+If you don't specify a mapping for your :py:class:`~django_zombodb.indexes.ZomboDBIndex`, django-zombodb uses `ZomboDB's default mappings <https://github.com/zombodb/zombodb/blob/master/TYPE-MAPPING.md#common-data-types>`_, which are based on the Postgres type of your model fields.
+
+To customize mapping, specify a ``field_mapping`` parameter to your :py:class:`~django_zombodb.indexes.ZomboDBIndex` like below:
+
+.. code-block:: python
+
+    from django_zombodb.indexes import ZomboDBIndex
+    from django_zombodb.querysets import SearchQuerySet
+
+    class Restaurant(models.Model):
+        name = models.TextField()
+        street = models.TextField()
+
+        objects = models.Manager.from_queryset(SearchQuerySet)()
+
+        class Meta:
+            indexes = [
+                ZomboDBIndex(
+                    fields=[
+                        'name',
+                        'street',
+                    ],
+                    field_mapping={
+                        'name': {"type": "text",
+                                 "copy_to": "zdb_all",
+                                 "analyzer": "fulltext_with_shingles",
+                                 "search_analyzer": "fulltext_with_shingles_search"},
+                        'street': {"type": "text",
+                                   "copy_to": "zdb_all",
+                                   "analyzer": "brazilian"},
+                    }
+                )
+            ]
+
+.. note::
+
+    You probably wish to have ``"copy_to": "zdb_all"`` on your textual fields to match ZomboDB default behavior. From ZomboDB docs: "``zdb_all`` is ZomboDB's version of Elasticsearch's "_all" field, except ``zdb_all`` is enabled for all versions of Elasticsearch. It is also configured as the default search field for every ZomboDB index". For more info, read `Elasticsearch docs take on the "_all" field <https://www.elastic.co/guide/en/elasticsearch/reference/6.8/mapping-all-field.html>`_.
 
 Move forward to learn how to perform Elasticsearch queries through your model.
