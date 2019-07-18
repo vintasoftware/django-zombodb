@@ -80,7 +80,7 @@ class ZomboDBIndexCreateStatementAdapterTests(TestCase):
             self.repr,
             '<ZomboDBIndexCreateStatementAdapter \'CREATE TYPE "my_test_index_row_type" AS '
             '(datetimes timestamp with time zone[], dates date[], times time[]); '
-            'SELECT zdb.define_field_mapping(\\\'"tests_datetimearraymodel"\\\', \\\'datetimes\\\', '
+            'SELECT zdb.define_field_mapping(\\\'"tests_datetimearraymodel"\\\', \\\'datetimes\\\', '  # noqa: E501
             '\\\'{"type": "date", "format": "HH:mm:ss.SSSSSS", "copy_to": "zdb_all"}\\\');'
             'SELECT zdb.define_field_mapping(\\\'"tests_datetimearraymodel"\\\', \\\'dates\\\', '
             '\\\'{"type": "date", "copy_to": "zdb_all"}\\\');'

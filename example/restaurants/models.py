@@ -24,22 +24,27 @@ class Restaurant(models.Model):
 
     class Meta:
         indexes = [
-            ZomboDBIndex(fields=[
-                'name',
-                'street',
-                'zip_code',
-                'city',
-                'state',
-                'phone',
-                'categories',
-            ],
-            field_mapping={
-                'name': {"type": "text", "copy_to": "zdb_all",
-                         "analyzer": "fulltext_with_shingles",
-                         "search_analyzer": "fulltext_with_shingles_search"},
-                'street': {"type": "text", "copy_to": "zdb_all", "analyzer":
-                           "zdb_standard"},
-            })
+            ZomboDBIndex(
+                fields=[
+                    'name',
+                    'street',
+                    'zip_code',
+                    'city',
+                    'state',
+                    'phone',
+                    'categories',
+                ],
+                field_mapping={
+                    'name': {"type": "text",
+                             "copy_to": "zdb_all",
+                             "analyzer": "fulltext_with_shingles",
+                             "search_analyzer": "fulltext_with_shingles_search"},
+                    'street': {"type": "text",
+                               "copy_to": "zdb_all",
+                               "analyzer": "fulltext_with_shingles",
+                               "search_analyzer": "fulltext_with_shingles_search"},
+                }
+            )
         ]
 
     def __str__(self):
