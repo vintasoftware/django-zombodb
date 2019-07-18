@@ -19,23 +19,32 @@ class SearchQuerySetMixin:
     def order_by_score(self, score_attr='zombodb_score'):
         return self.annotate_score(score_attr).order_by('-' + score_attr, 'pk')
 
-    def _search(self, query, query_str, validate, validate_fn, sort, score_attr):
+    def _search(self, query, query_str, validate, validate_fn, sort, score_attr, limit):
         if validate:
             is_valid = validate_fn(self.model, query)
             if not is_valid:
                 raise InvalidElasticsearchQuery(
                     "Invalid Elasticsearch query: {}".format(query_str))
 
-        queryset = self.extra(
-            where=[connection.ops.quote_name(self.model._meta.db_table) + ' ==> %s'],
-            params=[query_str],
-        )
+        if limit is not None:
+            queryset = self.extra(
+                where=[
+                    connection.ops.quote_name(self.model._meta.db_table) + ' ==> dsl.limit(%s, %s)'
+                ],
+                params=[limit, query_str],
+            )
+        else:
+            queryset = self.extra(
+                where=[connection.ops.quote_name(self.model._meta.db_table) + ' ==> %s'],
+                params=[query_str],
+            )
         if sort:
             queryset = queryset.order_by_score(score_attr=score_attr)
 
         return queryset
 
-    def query_string_search(self, query, validate=False, sort=False, score_attr='zombodb_score'):
+    def query_string_search(
+            self, query, validate=False, sort=False, score_attr='zombodb_score', limit=None):
         query_str = query
 
         return self._search(
@@ -44,9 +53,11 @@ class SearchQuerySetMixin:
             validate=validate,
             validate_fn=validate_query_string,
             sort=sort,
-            score_attr=score_attr)
+            score_attr=score_attr,
+            limit=limit)
 
-    def dict_search(self, query, validate=False, sort=False, score_attr='zombodb_score'):
+    def dict_search(
+            self, query, validate=False, sort=False, score_attr='zombodb_score', limit=None):
         query_str = ES_JSON_SERIALIZER.dumps(query)
 
         return self._search(
@@ -55,9 +66,11 @@ class SearchQuerySetMixin:
             validate=validate,
             validate_fn=validate_query_dict,
             sort=sort,
-            score_attr=score_attr)
+            score_attr=score_attr,
+            limit=limit)
 
-    def dsl_search(self, query, validate=False, sort=False, score_attr='zombodb_score'):
+    def dsl_search(
+            self, query, validate=False, sort=False, score_attr='zombodb_score', limit=None):
         if isinstance(query, Search):
             raise InvalidElasticsearchQuery(
                 "Do not use the `Search` class. "
@@ -69,7 +82,8 @@ class SearchQuerySetMixin:
             query=query_dict,
             validate=validate,
             sort=sort,
-            score_attr=score_attr)
+            score_attr=score_attr,
+            limit=limit)
 
 
 class SearchQuerySet(SearchQuerySetMixin, models.QuerySet):

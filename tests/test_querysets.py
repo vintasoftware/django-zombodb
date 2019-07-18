@@ -246,3 +246,99 @@ class SearchQuerySetTests(TransactionTestCase):
             str(cm.exception),
             "Can't find a ZomboDBIndex at model {model}. "
             "Did you forget it? ".format(model=RestaurantNoIndex))
+
+    def test_query_string_search_no_limit(self):
+        # duplicate tj and soleil
+        self.tj.pk = None
+        self.tj.save()
+        self.soleil.pk = None
+        self.soleil.save()
+
+        results = Restaurant.objects.query_string_search(
+            'skillman',
+            sort=True,
+            limit=None)
+
+        self.assertEqual(len(results), 4)
+        self.assertEqual(
+            [r.name for r in results],
+            [self.soleil.name, self.soleil.name, self.tj.name, self.tj.name])
+
+    def test_query_string_search_limit(self):
+        # duplicate tj and soleil
+        self.tj.pk = None
+        self.tj.save()
+        self.soleil.pk = None
+        self.soleil.save()
+
+        results = Restaurant.objects.query_string_search(
+            'skillman',
+            sort=True,
+            limit=2)
+
+        self.assertEqual(len(results), 2)
+        self.assertEqual([r.name for r in results], [self.soleil.name] * 2)
+
+    def test_dict_search_no_limit(self):
+        # duplicate tj and soleil
+        self.tj.pk = None
+        self.tj.save()
+        self.soleil.pk = None
+        self.soleil.save()
+
+        results = Restaurant.objects.dict_search(
+            {'match': {'street': 'skillman'}},
+            sort=True,
+            limit=None)
+
+        self.assertEqual(len(results), 4)
+        self.assertEqual(
+            [r.name for r in results],
+            [self.soleil.name, self.soleil.name, self.tj.name, self.tj.name])
+
+    def test_dict_search_limit(self):
+        # duplicate tj and soleil
+        self.tj.pk = None
+        self.tj.save()
+        self.soleil.pk = None
+        self.soleil.save()
+
+        results = Restaurant.objects.dict_search(
+            {'match': {'street': 'skillman'}},
+            sort=True,
+            limit=2)
+
+        self.assertEqual(len(results), 2)
+        self.assertEqual([r.name for r in results], [self.soleil.name] * 2)
+
+    def test_dsl_search_no_limit(self):
+        # duplicate tj and soleil
+        self.tj.pk = None
+        self.tj.save()
+        self.soleil.pk = None
+        self.soleil.save()
+
+        results = Restaurant.objects.dsl_search(
+            ElasticsearchQ('match', street='skillman'),
+            sort=True,
+            limit=None)
+
+        self.assertEqual(len(results), 4)
+        self.assertEqual(
+            [r.name for r in results],
+            [self.soleil.name, self.soleil.name, self.tj.name, self.tj.name])
+
+    def test_dsl_search_limit(self):
+        # duplicate tj and soleil
+        self.tj.pk = None
+        self.tj.save()
+        self.soleil.pk = None
+        self.soleil.save()
+
+        results = Restaurant.objects.dsl_search(
+            ElasticsearchQ('match', street='skillman'),
+            sort=True,
+            limit=2)
+
+        self.assertEqual(len(results), 2)
+        self.assertEqual([r.name for r in results], [self.soleil.name] * 2)

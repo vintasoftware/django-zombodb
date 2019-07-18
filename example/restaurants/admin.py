@@ -17,6 +17,7 @@ class RestaurantAdmin(ZomboDBAdminMixin, admin.ModelAdmin):
         'phone',
         'categories',
     )
+    max_search_results = 100
 
     class Media:
         js = ('django_zombodb/js/hide_show_score.js',)

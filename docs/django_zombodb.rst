@@ -68,6 +68,14 @@ django\_zombodb.querysets module
    :undoc-members:
    :show-inheritance:
 
+django\_zombodb.serializers module
+----------------------------------
+
+.. automodule:: django_zombodb.serializers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Module contents
 ---------------

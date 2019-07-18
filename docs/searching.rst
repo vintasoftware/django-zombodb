@@ -73,6 +73,15 @@ Alternatively, if you want to combine with your own ``order_by``, you can use th
         attr='zombodb_score'
     ).order_by('-zombodb_score', 'name', 'pk')
 
+Limiting
+--------
+
+**It's a good practice to set a hard limit to the number of search results.** For most search use cases, you shouldn't need more than a certain number of results, either because users will only consume some of the high scoring results, or because documents with lower scores aren't relevant to your process. To limit the results, use the ``limit`` parameter on search methods:
+
+.. code-block:: python
+
+    Restaurant.objects.query_string_search("brasil~ AND steak*", limit=1000)
+
 Lazy and Chainable
 ------------------
 
@@ -102,7 +111,8 @@ The search methods are like the traditional ``filter`` method: they return a reg
 
     While that may work as expected, it's `extremely inneficient <https://github.com/zombodb/zombodb/issues/335>`_. Instead, use compound queries like `"bool" <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html#query-dsl-bool-query>`_. They'll be much faster. Note that "bool" queries might be quite confusing to implement. Check tutorials about them, like `this one <https://engineering.carsguide.com.au/elasticsearch-demystifying-the-bool-query-11da737a4efb>`_.
 
-Limitations
------------
 
-Currently django-zombodb doesn't support ZomboDB's `limit, offset, sort functions <https://github.com/zombodb/zombodb/blob/master/QUERY-DSL.md#sort-and-limit-functions>`_ that work on the Elasticsearch side. Regular SQL LIMIT/OFFSET/ORDER BY works fine, so traditional ``QuerySet`` operations work.
+Missing features
+----------------
+
+Currently django-zombodb doesn't support ZomboDB's `offset and sort functions <https://github.com/zombodb/zombodb/blob/master/QUERY-DSL.md#sort-and-limit-functions>`_ that work on the Elasticsearch side. Regular SQL LIMIT/OFFSET/ORDER BY works fine, therefore traditional ``QuerySet`` operations work, but aren't as performant as doing the same on ES side.

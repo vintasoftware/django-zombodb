@@ -36,6 +36,7 @@ pylint:
     - protected-access
     - super-init-not-called
     - too-few-public-methods
+    - too-many-public-methods
     - too-many-arguments
     - too-many-instance-attributes
   options:
