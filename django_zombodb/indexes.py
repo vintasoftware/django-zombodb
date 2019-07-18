@@ -12,7 +12,6 @@ except ImportError:
     from django_zombodb.base_indexes import PostgresIndex
 
 
-
 class ZomboDBIndexCreateStatementAdapter:
     template = "CREATE INDEX %(name)s ON %(table)s USING zombodb ((ROW(%(columns)s)::%(row_type)s)) %(extra)s"  # noqa: E501
 
