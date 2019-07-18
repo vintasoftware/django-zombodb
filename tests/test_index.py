@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import django
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -17,11 +19,11 @@ class ZomboDBIndexCreateStatementAdapterTests(TestCase):
         self.index_name = 'my_test_index'
         self.index = ZomboDBIndex(
             fields=['datetimes', 'dates', 'times'],
-            field_mapping={
-                'datetimes': {'type': 'date', 'format': 'HH:mm:ss.SSSSSS', 'copy_to': 'zdb_all'},
-                'dates': {'type': 'date', 'copy_to': 'zdb_all'},
-                'times': {'type': 'date', 'copy_to': 'zdb_all'}
-            },
+            field_mapping=OrderedDict([  # use OrderedDict to stabilize tests on Python < 3.6
+                ('datetimes', {'type': 'date', 'format': 'HH:mm:ss.SSSSSS', 'copy_to': 'zdb_all'}),
+                ('dates', {'type': 'date', 'copy_to': 'zdb_all'}),
+                ('times', {'type': 'date', 'copy_to': 'zdb_all'}),
+            ]),
             name=self.index_name,
             shards=4,
             replicas=1,
