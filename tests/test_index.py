@@ -11,6 +11,7 @@ from .models import DateTimeArrayModel, IntegerArrayModel
 
 @override_settings(ZOMBODB_ELASTICSEARCH_URL='http://localhost:9999/')
 class ZomboDBIndexCreateStatementAdapterTests(TestCase):
+    maxDiff = 10000
 
     def setUp(self):
         self.index_name = 'my_test_index'
