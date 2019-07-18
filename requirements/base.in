@@ -1,6 +1,6 @@
 # Core requirements for using this application
 
 Django
-elasticsearch-dsl
-elasticsearch
+elasticsearch-dsl<7
+elasticsearch<7
 psycopg2

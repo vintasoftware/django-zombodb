@@ -4,9 +4,9 @@
 #
 #    pip-compile --output-file=requirements.txt requirements/base.in requirements/prod.in
 #
-elasticsearch-dsl>=7.0.0
-elasticsearch>=7.0.2
-psycopg2>=2.8.2
+elasticsearch-dsl>=6.4.0
+elasticsearch>=6.4.0
+psycopg2>=2.8.3
 python-dateutil>=2.8.0    # via elasticsearch-dsl
 pytz>=2019.1              # via django
 six>=1.12.0               # via elasticsearch-dsl, python-dateutil

@@ -8,9 +8,9 @@ aspy.yaml==1.3.0          # via pre-commit
 astroid==2.0.4            # via prospector, pylint, pylint-celery, pylint-flask, requirements-detector
 cfgv==2.0.0               # via pre-commit
 dodgy==0.1.9              # via prospector
-identify==1.4.4           # via pre-commit
+identify==1.4.5           # via pre-commit
 importlib-metadata==0.18  # via pre-commit
-isort==4.3.20
+isort==4.3.21
 lazy-object-proxy==1.4.1  # via astroid
 mccabe==0.6.1             # via prospector, pylint
 nodeenv==1.3.3            # via pre-commit
@@ -18,7 +18,7 @@ pep8-naming==0.4.1        # via prospector
 pre-commit==1.17.0
 prospector==1.1.6.2
 pycodestyle==2.4.0        # via prospector
-pydocstyle==3.0.0         # via prospector
+pydocstyle==4.0.0         # via prospector
 pyflakes==1.6.0           # via prospector
 pylint-celery==0.3        # via prospector
 pylint-django==2.0.2      # via prospector
@@ -28,9 +28,9 @@ pylint==2.1.1             # via prospector, pylint-celery, pylint-django, pylint
 pyyaml==5.1.1
 requirements-detector==0.6  # via prospector
 setoptconf==0.2.0         # via prospector
-six==1.12.0               # via astroid, cfgv, pre-commit, pydocstyle
-snowballstemmer==1.2.1    # via pydocstyle
+six==1.12.0               # via astroid, cfgv, pre-commit
+snowballstemmer==1.9.0    # via pydocstyle
 toml==0.10.0              # via pre-commit
-virtualenv==16.6.0        # via pre-commit
-wrapt==1.11.1             # via astroid
-zipp==0.5.1               # via importlib-metadata
+virtualenv==16.6.2        # via pre-commit
+wrapt==1.11.2             # via astroid
+zipp==0.5.2               # via importlib-metadata

@@ -8,25 +8,25 @@ alabaster==0.7.12         # via sphinx
 babel==2.7.0              # via sphinx
 bleach==3.1.0             # via readme-renderer
 bumpversion==0.5.3
-certifi==2019.3.9         # via requests
+certifi==2019.6.16        # via requests
 chardet==3.0.4            # via doc8, requests
 click==7.0                # via pip-tools
-django==2.2.2
+django==2.2.3
 doc8==0.8.0
 docutils==0.14            # via doc8, readme-renderer, restructuredtext-lint, sphinx
-elasticsearch-dsl==7.0.0
-elasticsearch==7.0.2
+elasticsearch-dsl==6.4.0
+elasticsearch==6.4.0
 filelock==3.0.12          # via tox
 idna==2.8                 # via requests
 imagesize==1.1.0          # via sphinx
-importlib-metadata==0.18  # via pluggy
+importlib-metadata==0.18  # via pluggy, tox
 jinja2==2.10.1            # via sphinx
 markupsafe==1.1.1         # via jinja2
-packaging==19.0           # via sphinx
-pbr==5.2.1                # via stevedore
-pip-tools==3.8.0
+packaging==19.0           # via sphinx, tox
+pbr==5.4.1                # via stevedore
+pip-tools==3.9.0
 pluggy==0.12.0            # via tox
-psycopg2==2.8.2
+psycopg2==2.8.3
 py==1.8.0                 # via tox
 pygments==2.4.2           # via readme-renderer, sphinx
 pyparsing==2.4.0          # via packaging
@@ -37,9 +37,9 @@ readme-renderer==24.0
 requests==2.22.0          # via sphinx
 restructuredtext-lint==1.3.0  # via doc8
 six==1.12.0               # via bleach, doc8, elasticsearch-dsl, packaging, pip-tools, python-dateutil, readme-renderer, stevedore, tox
-snowballstemmer==1.2.1    # via sphinx
+snowballstemmer==1.9.0    # via sphinx
 sphinx-rtd-theme==0.4.3
-sphinx==2.1.1
+sphinx==2.1.2
 sphinxcontrib-applehelp==1.0.1  # via sphinx
 sphinxcontrib-devhelp==1.0.1  # via sphinx
 sphinxcontrib-htmlhelp==1.0.2  # via sphinx
@@ -50,12 +50,12 @@ sqlparse==0.3.0           # via django
 stevedore==1.30.1         # via doc8
 toml==0.10.0              # via tox
 tox-battery==0.5.1
-tox==3.12.1
+tox==3.13.2
 urllib3==1.25.3           # via elasticsearch, requests
-virtualenv==16.6.0        # via tox
+virtualenv==16.6.2        # via tox
 webencodings==0.5.1       # via bleach
 wheel==0.30.0
-zipp==0.5.1               # via importlib-metadata
+zipp==0.5.2               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.0.1        # via sphinx, tox
+# setuptools==41.0.1        # via sphinx
