@@ -2,13 +2,15 @@ import django
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
+from django_zombodb.serializers import ES_JSON_SERIALIZER
+
+
 try:
     from django.contrib.postgres.indexes import PostgresIndex
 except ImportError:
     # Django < 2.1
     from django_zombodb.base_indexes import PostgresIndex
 
-from django_zombodb.serializers import ES_JSON_SERIALIZER
 
 
 class ZomboDBIndexCreateStatementAdapter:
