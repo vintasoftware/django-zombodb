@@ -4,7 +4,8 @@ from django.db.models.expressions import RawSQL
 from elasticsearch_dsl import Search
 
 from django_zombodb.exceptions import InvalidElasticsearchQuery
-from django_zombodb.helpers import json_serializer, validate_query_dict, validate_query_string
+from django_zombodb.helpers import validate_query_dict, validate_query_string
+from django_zombodb.serializers import ES_JSON_SERIALIZER
 
 
 class SearchQuerySetMixin:
@@ -46,7 +47,7 @@ class SearchQuerySetMixin:
             score_attr=score_attr)
 
     def dict_search(self, query, validate=False, sort=False, score_attr='zombodb_score'):
-        query_str = json_serializer.dumps(query)
+        query_str = ES_JSON_SERIALIZER.dumps(query)
 
         return self._search(
             query=query,

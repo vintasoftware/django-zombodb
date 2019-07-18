@@ -1,15 +1,14 @@
-import json
-
 import django
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-
 
 try:
     from django.contrib.postgres.indexes import PostgresIndex
 except ImportError:
     # Django < 2.1
     from django_zombodb.base_indexes import PostgresIndex
+
+from django_zombodb.serializers import ES_JSON_SERIALIZER
 
 
 class ZomboDBIndexCreateStatementAdapter:
@@ -42,7 +41,7 @@ class ZomboDBIndexCreateStatementAdapter:
         s = ''
         if self.field_mapping:
             for field in self.field_mapping:
-                mapping = json.dumps(self.field_mapping[field])
+                mapping = ES_JSON_SERIALIZER.dumps(self.field_mapping[field])
                 s += define_field_mapping % (self.parts['table'], field, mapping)
         return s
 
