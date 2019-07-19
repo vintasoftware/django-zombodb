@@ -3,7 +3,13 @@
 Change Log
 ----------
 
-0.2.1 (2019-03-01)
+0.3.0 (2019-07-18)
+++++++++++++++++++
+
+* Support for custom Elasticsearch mappings through ``field_mapping`` parameter on ``ZomboDBIndex``.
+* Support to ``limit`` parameter on search methods.
+
+0.2.1 (2019-06-13)
 ++++++++++++++++++
 
 * Dropped support for Python 3.4.
