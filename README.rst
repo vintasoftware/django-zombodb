@@ -116,6 +116,15 @@ You need to have Elasticsearch and Postgres instances running on default ports. 
 
     python runtests.py
 
+Security
+--------
+
+Please check `SECURITY.rst <SECURITY.rst>`_.
+If you found or if you think you found a vulnerability please get in touch via admin *AT* vinta.com.br
+
+Please avoid disclosing any security issue on GitHub or any other public website. We'll work to swiftly address any possible vulnerability and give credit to reporters (if wanted).
+
+
 Commercial Support
 ------------------
 This project is maintained by `Vinta Software <https://www.vinta.com.br/?django-zombodb=1>`_ and other contributors. We are always looking for exciting work, so if you need any commercial support, feel free to get in touch: contact@vinta.com.br
