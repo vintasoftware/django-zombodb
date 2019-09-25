@@ -62,7 +62,7 @@ Ready to contribute? Here's how to set up `django-zombodb` for local development
     $ mkvirtualenv django-zombodb
     $ cd django-zombodb/
     $ pip install -e .
-    $ make requirements
+    $ make install_requirements
 
 4. Create a branch for local development::
 
@@ -74,7 +74,7 @@ Ready to contribute? Here's how to set up `django-zombodb` for local development
    tests, including testing other Python versions with tox::
 
     $ make lint
-    $ python runtests.py
+    $ make test
     $ make test-all
 
 6. Commit your changes and push your branch to GitHub::
@@ -101,4 +101,4 @@ Tips
 
 To run a subset of tests::
 
-    $ python runtests.py tests.test_django_zombodb
+    $ python runtests.py tests.test_apps
