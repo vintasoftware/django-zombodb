@@ -92,8 +92,8 @@ class ZomboDBIndexCreateStatementAdapterTests(TestCase):
             '\\\'{"type":"date","copy_to":"zdb_all"}\\\');'
             'CREATE INDEX "my_test_index" ON "tests_datetimearraymodel" '
             'USING zombodb ((ROW("datetimes", "dates", "times")::"my_test_index_row_type")) '
-            'WITH (url = "http://localhost:9999/", shards = 4, replicas = 1, '
-            'alias = "my-test-index-alias", refresh_interval = "1s", type_name = "doc", '
+            'WITH (url = \\\'http://localhost:9999/\\\', shards = 4, replicas = 1, '
+            'alias = \\\'my-test-index-alias\\\', refresh_interval = \\\'1s\\\', type_name = \\\'doc\\\', '  # noqa: E501
             'bulk_concurrency = 10, batch_size = 8388608, compression_level = 9, llapi = false) \'>'
         )
 
@@ -110,8 +110,8 @@ class ZomboDBIndexCreateStatementAdapterTests(TestCase):
             '\'{"type":"date","copy_to":"zdb_all"}\');'
             'CREATE INDEX "my_test_index" ON "tests_datetimearraymodel" '
             'USING zombodb ((ROW("datetimes", "dates", "times")::"my_test_index_row_type")) '
-            'WITH (url = "http://localhost:9999/", shards = 4, replicas = 1, '
-            'alias = "my-test-index-alias", refresh_interval = "1s", type_name = "doc", '
+            'WITH (url = \'http://localhost:9999/\', shards = 4, replicas = 1, '
+            'alias = \'my-test-index-alias\', refresh_interval = \'1s\', type_name = \'doc\', '
             'bulk_concurrency = 10, batch_size = 8388608, compression_level = 9, llapi = false) '
         )
 

@@ -174,7 +174,7 @@ class ZomboDBIndex(PostgresIndex):
 
     def _format_param_value(self, value, param_type):
         if param_type == str:
-            value_formatted = '"' + value + '"'
+            value_formatted = "'" + value + "'"
         elif param_type == int:
             value_formatted = str(value)
         else:  # param_type == bool
