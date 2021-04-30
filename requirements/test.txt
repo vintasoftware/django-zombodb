@@ -4,17 +4,25 @@
 #
 #    pip-compile --output-file=requirements/test.txt requirements/base.in requirements/test.in
 #
-certifi==2019.9.11        # via requests
-chardet==3.0.4            # via requests
+certifi==2019.9.11
+    # via requests
+chardet==3.0.4
+    # via requests
 codecov==2.0.15
+    # via -r test.in
 coverage==4.4.1
-elasticsearch-dsl==6.4.0
-elasticsearch==6.4.0
-idna==2.8                 # via requests
+    # via
+    #   -r test.in
+    #   codecov
+idna==2.8
+    # via requests
 mock==3.0.5
-psycopg2==2.8.3
-python-dateutil==2.8.0    # via elasticsearch-dsl
+    # via -r test.in
 python-decouple==3.1
-requests==2.22.0          # via codecov
-six==1.12.0               # via elasticsearch-dsl, mock, python-dateutil
-urllib3==1.25.6           # via elasticsearch, requests
+    # via -r test.in
+requests==2.22.0
+    # via codecov
+six==1.12.0
+    # via mock
+urllib3==1.25.8
+    # via requests
