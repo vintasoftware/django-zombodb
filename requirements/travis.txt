@@ -4,23 +4,41 @@
 #
 #    pip-compile --output-file=requirements/travis.txt requirements/travis.in
 #
-certifi==2019.9.11        # via requests
-chardet==3.0.4            # via requests
+certifi==2022.12.7
+    # via requests
+chardet==3.0.4
+    # via requests
 codecov==2.0.15
-coverage==4.5.4           # via codecov
-filelock==3.0.12          # via tox
-idna==2.8                 # via requests
-importlib-metadata==0.23  # via pluggy, tox
-more-itertools==7.2.0     # via zipp
-packaging==19.2           # via tox
-pluggy==0.13.0            # via tox
-py==1.8.0                 # via tox
-pyparsing==2.4.2          # via packaging
-requests==2.22.0          # via codecov
-six==1.12.0               # via packaging, tox
-toml==0.10.0              # via tox
-tox-travis==0.12
+    # via -r travis.in
+coverage==4.5.4
+    # via codecov
+filelock==3.0.12
+    # via tox
+idna==2.8
+    # via requests
+packaging==19.2
+    # via tox
+pluggy==0.13.0
+    # via tox
+py==1.8.0
+    # via tox
+pyparsing==2.4.2
+    # via packaging
+requests==2.22.0
+    # via codecov
+six==1.12.0
+    # via
+    #   packaging
+    #   tox
+toml==0.10.0
+    # via tox
 tox==3.14.0
-urllib3==1.25.6           # via requests
-virtualenv==16.7.5        # via tox
-zipp==0.6.0               # via importlib-metadata
+    # via
+    #   -r travis.in
+    #   tox-travis
+tox-travis==0.12
+    # via -r travis.in
+urllib3==1.25.6
+    # via requests
+virtualenv==16.7.5
+    # via tox
