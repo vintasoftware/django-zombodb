@@ -4,5 +4,5 @@ bumpversion==0.5.3        # Update version command line
 pip-tools                 # Requirements file management
 tox                       # virtualenv management for tests
 tox-battery               # Makes tox aware of requirements file changes
-wheel==0.30.0             # For generation of wheels for PyPI
+wheel==0.38.1             # For generation of wheels for PyPI
 python-decouple           # For settings.py
