@@ -8,7 +8,7 @@ alabaster==0.7.12
     # via sphinx
 babel==2.7.0
     # via sphinx
-bleach==3.1.0
+bleach==3.3.0
     # via readme-renderer
 bumpversion==0.5.3
     # via -r dev.in
@@ -40,6 +40,7 @@ markupsafe==1.1.1
     # via jinja2
 packaging==19.2
     # via
+    #   bleach
     #   sphinx
     #   tox
 pbr==5.4.3
