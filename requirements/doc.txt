@@ -50,7 +50,7 @@ pluggy==0.13.0
     # via tox
 py==1.8.0
     # via tox
-pygments==2.4.2
+pygments==2.7.4
     # via
     #   readme-renderer
     #   sphinx
