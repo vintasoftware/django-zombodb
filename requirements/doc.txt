@@ -48,7 +48,7 @@ pip-tools==4.1.0
     # via -r dev.in
 pluggy==0.13.0
     # via tox
-py==1.8.0
+py==1.11.0
     # via tox
 pygments==2.4.2
     # via
