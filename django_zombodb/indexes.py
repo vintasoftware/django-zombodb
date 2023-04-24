@@ -143,17 +143,26 @@ class ZomboDBIndex(PostgresIndex):
         # since Index.max_name_length is 30
         return self.name + '_row_type'
 
-    def create_sql(self, model, schema_editor, using=''):  # pylint: disable=unused-argument
+    def create_sql(
+        self, model, schema_editor, concurrently=False, using=''
+    ):  # pylint: disable=unused-argument
         statement = super().create_sql(model, schema_editor)
         row_type = schema_editor.quote_name(self._get_row_type_name())
         return ZomboDBIndexCreateStatementAdapter(
-            statement, model, schema_editor, self.fields, self.field_mapping, row_type)
+            statement,
+            model,
+            schema_editor,
+            self.fields,
+            self.field_mapping,
+            row_type,
+            concurrently=concurrently,
+        )
 
-    def remove_sql(self, model, schema_editor):
+    def remove_sql(self, model, schema_editor, concurrently=False):
         statement = super().remove_sql(model, schema_editor)
         row_type = schema_editor.quote_name(self._get_row_type_name())
         if django.VERSION >= (2, 2, 0):
-            return ZomboDBIndexRemoveStatementAdapter(statement, row_type)
+            return ZomboDBIndexRemoveStatementAdapter(statement, row_type, concurrently=concurrently)
         else:
             return statement + ('; DROP TYPE IF EXISTS %s;' % row_type)
 
